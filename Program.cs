@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace MakiOneDrawingBot
 {
@@ -6,7 +7,15 @@ namespace MakiOneDrawingBot
     {
         static void Main(string[] args)
         {
-            Console.WriteLine($"Hello World! {string.Join(",", args)}");
+            Console.WriteLine("Hello World!");
+            foreach (var env in args)
+            {
+                Console.WriteLine($"arg:{env}");
+            }
+            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
+            {
+                Console.WriteLine($"{env.Key}={env.Value}");
+            }
         }
     }
 }
