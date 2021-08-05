@@ -1,0 +1,25 @@
+name: NotificationFinish
+
+on:
+  workflow_dispatch :
+  schedule:
+    - cron: "00 16 3,13,23 * *" # */3,13,23 25:00
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Run
+      run: > 
+        dotnet run --
+        --command ${{ github.workflow }}
+        --twitter-api-key ${{ secrets.TWITTER_API_KEY }}
+        --twitter-api-secret ${{ secrets.TWITTER_API_SECRET }}
+        

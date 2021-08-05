@@ -1,8 +1,10 @@
-name: .NET
+name: NotificationMorning
 
 on:
   workflow_dispatch :
-  
+  schedule:
+    - cron: "30 00 3,13,23 * *" # */3,13,23 09:30
+
 jobs:
   build:
 
@@ -17,6 +19,7 @@ jobs:
     - name: Run
       run: > 
         dotnet run --
+        --command ${{ github.workflow }}
         --twitter-api-key ${{ secrets.TWITTER_API_KEY }}
         --twitter-api-secret ${{ secrets.TWITTER_API_SECRET }}
         
