@@ -15,7 +15,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Run
-      run: dotnet run
-      env:
-        TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
-        TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+      run: > 
+        dotnet run --
+        --twitter-api-key ${{ secrets.TWITTER_API_KEY }}
+        --twitter-api-secret ${{ secrets.TWITTER_API_SECRET }}
+        
