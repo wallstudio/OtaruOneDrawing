@@ -63,8 +63,8 @@ namespace MakiOneDrawingBot
 
     class Actions
     {
-        readonly string HASH_TAG = "&弦巻マキ深夜の真剣お絵描き60分勝負";
-        readonly string HELP_URL = "https://example.com";
+        readonly string HASH_TAG = "H弦巻マキ深夜の真剣お絵描き60分勝負";
+        readonly string HELP_URL = "https_example_com";
         readonly string twitterApiKey;
         readonly string twitterApiSecret;
         readonly string bearerToken;
@@ -91,7 +91,7 @@ namespace MakiOneDrawingBot
             var theme1 = "";
             var theme2 = "";
             var uploadResult = tokens.Media.Upload(new FileInfo("lenna.png"));
-            tokens.Statuses.Update(
+            var morning = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
 今夜のわんどろのテーマ発表！
@@ -113,7 +113,7 @@ namespace MakiOneDrawingBot
         public void NotificationStart()
         {
             var me = tokens.Account.VerifyCredentials();
-            var mooning = EnumerateSearchTweets(
+            var morning = EnumerateSearchTweets(
                 q: $"{HASH_TAG} 今夜のわんどろのテーマ発表 from:{me.ScreenName} exclude:retweets",
                 result_type: "recent",
                 until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
@@ -123,7 +123,7 @@ namespace MakiOneDrawingBot
             var theme1 = "";
             var theme2 = "";
             var uploadResult = tokens.Media.Upload(new FileInfo("lenna.png"));
-            tokens.Statuses.Update(
+            var start = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
 わんどろスタート！(｀・ω・´）
@@ -137,7 +137,7 @@ namespace MakiOneDrawingBot
 {HELP_URL}
                 ".Trim(),
                 media_ids: new []{ uploadResult.MediaId },
-                in_reply_to_status_id: mooning?.Id,
+                in_reply_to_status_id: morning?.Id,
                 auto_populate_reply_metadata: true);
         }
 
@@ -154,8 +154,8 @@ namespace MakiOneDrawingBot
                 count: 100).FirstOrDefault();
 
             var next = DateTime.Now.Date;
-            while(next.Day % 3 != 0) next += TimeSpan.FromDays(1);
-            tokens.Statuses.Update(
+            while(next.Day % 10 == 3) next += TimeSpan.FromDays(1);
+            var finish = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
 わんどろ終了ーー！！( ´ ∀`)ﾉA
@@ -189,8 +189,8 @@ namespace MakiOneDrawingBot
                 until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
                 count: 100).FirstOrDefault();
             var next = DateTime.Now.Date;
-            while(next.Day % 3 != 0) next += TimeSpan.FromDays(1);
-            tokens.Statuses.Update(
+            while(next.Day % 10 == 3) next += TimeSpan.FromDays(1);
+            var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
                     ? $@"
 {HASH_TAG}
