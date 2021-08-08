@@ -5,3 +5,5 @@
 
 obj/
 bin/
+font/*
+!font/Corporate-Logo-Rounded.ttf

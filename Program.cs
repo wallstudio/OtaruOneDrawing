@@ -5,6 +5,12 @@ using CoreTweet;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.Fonts;
 
 namespace MakiOneDrawingBot
 {
@@ -55,6 +61,10 @@ namespace MakiOneDrawingBot
                     actions.NotificationFinish();
                     actions.AccumulationPosts();
                     break;
+                case "CreateTextImage":
+                    File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ\nカワイイヤッター！"));
+                    // File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ⚡🔥\nカワイイヤッター！"));
+                    break;
                 default:
                     throw new ArgumentException($"--command={command}");
             }
@@ -88,9 +98,9 @@ namespace MakiOneDrawingBot
         public void NotificationMorning()
         {
             // TODO: Read theme from DB
-            var theme1 = "";
-            var theme2 = "";
-            var uploadResult = tokens.Media.Upload(new FileInfo("lenna.png"));
+            var theme1 = "マキマキ";
+            var theme2 = "ツルマキマキ";
+            var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var morning = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
@@ -120,9 +130,9 @@ namespace MakiOneDrawingBot
                 count: 100).FirstOrDefault();
 
             // TODO: Read theme from DB
-            var theme1 = "";
-            var theme2 = "";
-            var uploadResult = tokens.Media.Upload(new FileInfo("lenna.png"));
+            var theme1 = "マキマキ";
+            var theme2 = "ツルマキマキ";
+            var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var start = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
@@ -154,7 +164,7 @@ namespace MakiOneDrawingBot
                 count: 100).FirstOrDefault();
 
             var next = DateTime.Now.Date;
-            while(next.Day % 10 == 3) next += TimeSpan.FromDays(1);
+            while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var finish = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG}
@@ -189,7 +199,7 @@ namespace MakiOneDrawingBot
                 until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
                 count: 100).FirstOrDefault();
             var next = DateTime.Now.Date;
-            while(next.Day % 10 == 3) next += TimeSpan.FromDays(1);
+            while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
                     ? $@"
@@ -244,5 +254,29 @@ namespace MakiOneDrawingBot
             while(max_id != null);
         }
 
+        public static byte[] CreateTextImage(string text)
+        {
+            using var image = Image.Load("image_template.png");
+            image.Mutate(context =>
+            {
+                var font = new FontCollection().Install("font/Corporate-Logo-Rounded.ttf");
+                var option = new DrawingOptions();
+                option.TextOptions.VerticalAlignment = VerticalAlignment.Center;
+                option.TextOptions.HorizontalAlignment = HorizontalAlignment.Center;
+                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoEmoji-Regular.ttf"));
+                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoColorEmoji.ttf"));
+                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoColorEmoji_WindowsCompatible.ttf"));
+                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/seguiemj.ttf"));
+                context.DrawText(
+                    options: option,
+                    text: text,
+                    font: font.CreateFont(120, FontStyle.Bold),
+                    color: Color.Black,
+                    location: new PointF(image.Width/2, image.Height/3));
+            });
+            using var buffer = new MemoryStream();
+            image.SaveAsPng(buffer);
+            return buffer.ToArray();
+        }
     }
 }
