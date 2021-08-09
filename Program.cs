@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using CoreTweet;
@@ -36,7 +36,10 @@ namespace MakiOneDrawingBot
                 bearerToken: args.SkipWhile(a => a != "--bearer-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--bearer-token"),
                 accessToken: args.SkipWhile(a => a != "--access-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token"),
                 accessTokenSecret: args.SkipWhile(a => a != "--access-token-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token-secret"),
-                googleServiceAccountJwt: args.SkipWhile(a => a != "--google-service-account-jwt").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--google-service-account-jwt"));
+                googleServiceAccountJwt: args.SkipWhile(a => a != "--google-service-account-jwt").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--google-service-account-jwt"),
+                date: args.SkipWhile(a => a != "--date").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--date"),
+                next: args.SkipWhile(a => a != "--next").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--next"),
+                general: args.SkipWhile(a => a != "--general").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--general"));
 
             switch (command)
             {
@@ -71,8 +74,8 @@ namespace MakiOneDrawingBot
     class Actions
     {
         readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
-        // readonly string HASH_TAG = "#ツルマキマキ";
-        readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
+        readonly string HASH_TAG = "#ツルマキマキ";
+        // readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https://github.com/wallstudio/MakiOneDrawingBot/blob/master/README.md";
         readonly string twitterApiKey;
@@ -81,12 +84,16 @@ namespace MakiOneDrawingBot
         readonly string accessToken;
         readonly string accessTokenSecret;
         readonly string googleServiceAccountJwt;
+        readonly DateTime date;
+        readonly DateTime next;
+        readonly string general;
         readonly Tokens tokens;
 
-        DateTime JpNow => DateTime.UtcNow + TimeSpan.FromHours(+9);
-        DateTime JpNowDate => JpNow.Date;
+        string ScheduleId => date.ToString("yyyy_MM_dd");
+        string TimeStamp => (DateTime.UtcNow + TimeSpan.FromHours(+9)).ToString();
+        string TimeStampUtc => DateTime.UtcNow.ToString();
 
-        public Actions(string twitterApiKey, string twitterApiSecret, string bearerToken, string accessToken, string accessTokenSecret, string googleServiceAccountJwt)
+        public Actions(string twitterApiKey, string twitterApiSecret, string bearerToken, string accessToken, string accessTokenSecret, string googleServiceAccountJwt, string date, string next, string general)
         {
             this.twitterApiKey = twitterApiKey;
             this.twitterApiSecret = twitterApiSecret;
@@ -95,6 +102,17 @@ namespace MakiOneDrawingBot
             this.accessTokenSecret = accessTokenSecret;
             this.googleServiceAccountJwt = Encoding.UTF8.GetString(Convert.FromBase64String(googleServiceAccountJwt));
             tokens = Tokens.Create(twitterApiKey, twitterApiSecret, accessToken, accessTokenSecret);
+            this.date = !string.IsNullOrEmpty(date) ? DateTime.Parse(date) : (DateTime.UtcNow + TimeSpan.FromHours(+9)).Date;
+            if(!string.IsNullOrEmpty(next))
+            {
+                this.next = DateTime.Parse(next);
+            }
+            else
+            {
+                this.next = this.date;
+                while(this.next.Day % 10 != 3) this.next += TimeSpan.FromDays(1);
+            }
+            this.general = general;
         }
 
         /// <summary>
@@ -106,16 +124,16 @@ namespace MakiOneDrawingBot
 
             // Create new schedule
             var schedules = tables.First(tbl => tbl.Name == "schedule");
-            var schedule = schedules.Add(JpNowDate.ToString("yyyyMMdd"));
+            var schedule = schedules.Add(ScheduleId);
             var unusedTheme = tables
                 .First(tbl => tbl.Name == "theme")
                 .Where(thm => !schedules.Any(ev => ev["id_theme"] == thm["id"]));
             var theme = unusedTheme
-                .Where(thm => !DateTime.TryParse(thm["date"], out var date) || date == JpNowDate) // 別の日を除外
-                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var date) && date == JpNowDate)
+                .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == date) // 別の日を除外
+                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == date)
                 .First();
             schedule["id_theme"] = theme["id"];
-            schedule["date"] = JpNowDate.ToString("yyyy/MM/dd");
+            schedule["date"] = date.ToString("yyyy/MM/dd");
 
             // Post tweet
             var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
@@ -138,8 +156,8 @@ namespace MakiOneDrawingBot
 
             // Record
             schedule["id_morning_status"] = morning.Id.ToString();
-            schedule["ts_morning_status"] = JpNow.ToString();
-            schedule["ts_utc_morning_status"] = DateTime.UtcNow.ToString();
+            schedule["ts_morning_status"] = TimeStamp;
+            schedule["ts_utc_morning_status"] = TimeStampUtc;
         }
 
 
@@ -151,7 +169,7 @@ namespace MakiOneDrawingBot
             using var tables = GetTables();
             var schedule = tables
                 .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd"));
+                .First(sch => sch["id"] == ScheduleId);
 
             // Post tweet
             var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
@@ -176,8 +194,8 @@ namespace MakiOneDrawingBot
 
             // Record
             schedule["id_start_status"] = start.Id.ToString();
-            schedule["ts_start_status"] = JpNow.ToString();
-            schedule["ts_utc_start_status"] = DateTime.UtcNow.ToString();
+            schedule["ts_start_status"] = TimeStamp;
+            schedule["ts_utc_start_status"] = TimeStampUtc;
         }
 
         /// <summary>
@@ -188,10 +206,10 @@ namespace MakiOneDrawingBot
             using var tables = GetTables();
             var schedule = tables
                 .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd"));
+                .First(sch => sch["id"] == ScheduleId);
 
             // Post tweet
-            var next = JpNowDate + TimeSpan.FromDays(1);
+            var next = date + TimeSpan.FromDays(1);
             while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var finish = tokens.Statuses.Update(
                 status: $@"
@@ -210,8 +228,8 @@ namespace MakiOneDrawingBot
                 
             // Record
             schedule["id_finish_status"] = finish.Id.ToString();
-            schedule["ts_finish_status"] = JpNow.ToString();
-            schedule["ts_utc_finish_status"] = DateTime.UtcNow.ToString();
+            schedule["ts_finish_status"] = TimeStamp;
+            schedule["ts_utc_finish_status"] = TimeStampUtc;
         }
 
         /// <summary>
@@ -222,11 +240,12 @@ namespace MakiOneDrawingBot
             using var tables = GetTables();
             var schedule = tables
                 .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == (JpNowDate - TimeSpan.FromDays(1)).ToString("yyyyMMdd"));
+                .First(sch => sch["id"] == ScheduleId);
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
+            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15) - TimeSpan.FromDays(1); // TODO:
+            // var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
             var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(15);
             var tweets = EnumerateSearchTweets(
                 q: $"{HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
@@ -239,7 +258,7 @@ namespace MakiOneDrawingBot
                 .ToArray();
 
             // Post tweet
-            var next = JpNowDate;
+            var next = date;
             while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
@@ -269,8 +288,8 @@ namespace MakiOneDrawingBot
 
             // Record
             schedule["id_accumulation_status"] = preRetweet.Id.ToString();
-            schedule["ts_accumulation_status"] = JpNow.ToString();
-            schedule["ts_utc_accumulation_status"] = DateTime.UtcNow.ToString();
+            schedule["ts_accumulation_status"] = TimeStamp;
+            schedule["ts_utc_accumulation_status"] = TimeStampUtc;
 
             // Twitter
             foreach (var tweet in tweets)

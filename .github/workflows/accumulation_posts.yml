@@ -2,8 +2,21 @@ name: AccumulationPosts
 
 on:
   workflow_dispatch :
-  schedule:
-    - cron: "45 03 4,14,24 * *" # */4,14,24 12:45
+    inputs:
+      date:
+        description: 'date yyyy/MM/dd'
+        required: false
+        default: ''
+      next:
+        description: 'next yyyy/MM/dd'
+        required: false
+        default: ''
+      general:
+        description: 'general'
+        required: false
+        default: ''
+  # schedule:
+  #   - cron: "45 03 4,14,24 * *" # */4,14,24 12:45
   
 jobs:
   build:
@@ -26,6 +39,9 @@ jobs:
         --access-token ${{ secrets.ACCESS_TOKEN }}
         --access-token-secret ${{ secrets.ACCESS_TOKEN_SECRET }}
         --google-service-account-jwt ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}
+        --date ${{ github.event.inputs.date }}
+        --next ${{ github.event.inputs.next }}
+        --general ${{ github.event.inputs.general }}
     - name: Git
       run: |
         git status

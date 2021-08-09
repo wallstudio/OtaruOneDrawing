@@ -2,8 +2,21 @@ name: NotificationStart
 
 on:
   workflow_dispatch :
-  schedule:
-    - cron: "00 13 3,13,23 * *" # */3,13,23 22:00
+    inputs:
+      date:
+        description: 'date yyyy/MM/dd'
+        required: false
+        default: ''
+      next:
+        description: 'next yyyy/MM/dd'
+        required: false
+        default: ''
+      general:
+        description: 'general'
+        required: false
+        default: ''
+  # schedule:
+  #   - cron: "00 13 3,13,23 * *" # */3,13,23 22:00
   
 jobs:
   build:
@@ -26,4 +39,7 @@ jobs:
         --access-token ${{ secrets.ACCESS_TOKEN }}
         --access-token-secret ${{ secrets.ACCESS_TOKEN_SECRET }}
         --google-service-account-jwt ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}
+        --date ${{ github.event.inputs.date }}
+        --next ${{ github.event.inputs.next }}
+        --general ${{ github.event.inputs.general }}
         
