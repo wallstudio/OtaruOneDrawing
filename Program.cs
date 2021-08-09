@@ -71,7 +71,7 @@ namespace MakiOneDrawingBot
     class Actions
     {
         readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
-        readonly string HASH_TAG = "#＿＿マ＿深夜の真剣お絵描き60分勝負";
+        readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https_example_com";
         readonly string twitterApiKey;
