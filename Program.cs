@@ -33,10 +33,6 @@ namespace MakiOneDrawingBot
             {
                 Console.WriteLine($"arg:{env}");
             }
-            foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
-            {
-                Console.WriteLine($"{env.Key}={env.Value}");
-            }
 
             var command = args.SkipWhile(a => a != "--command").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--command");
             var actions = new Actions(
