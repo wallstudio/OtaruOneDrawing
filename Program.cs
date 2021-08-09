@@ -21,9 +21,9 @@ namespace MakiOneDrawingBot
                 accessToken: args.SkipWhile(a => a != "--access-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token"),
                 accessTokenSecret: args.SkipWhile(a => a != "--access-token-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token-secret"),
                 googleServiceAccountJwt: args.SkipWhile(a => a != "--google-service-account-jwt").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--google-service-account-jwt"),
-                date: args.SkipWhile(a => a != "--date").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--date"),
-                next: args.SkipWhile(a => a != "--next").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--next"),
-                general: args.SkipWhile(a => a != "--general").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--general"));
+                date: args.SkipWhile(a => a != "--date").Skip(1).FirstOrDefault(),
+                next: args.SkipWhile(a => a != "--next").Skip(1).FirstOrDefault(),
+                general: args.SkipWhile(a => a != "--general").Skip(1).FirstOrDefault());
 
             switch (command)
             {
