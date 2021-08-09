@@ -71,8 +71,8 @@ namespace MakiOneDrawingBot
     class Actions
     {
         readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
-        readonly string HASH_TAG = "#ツルマキマキ";
-        // readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
+        // readonly string HASH_TAG = "#ツルマキマキ";
+        readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https://github.com/wallstudio/MakiOneDrawingBot/blob/master/README.md";
         readonly string twitterApiKey;
@@ -222,13 +222,11 @@ namespace MakiOneDrawingBot
             using var tables = GetTables();
             var schedule = tables
                 .First(tbl => tbl.Name == "schedule")
-                // .First(sch => sch["id"] == (JpNowDate - TimeSpan.FromDays(1)).ToString("yyyyMMdd"));
-                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd")); // TODO:
+                .First(sch => sch["id"] == (JpNowDate - TimeSpan.FromDays(1)).ToString("yyyyMMdd"));
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15) - TimeSpan.FromDays(1); // TODO:
-            // var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
+            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
             var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(15);
             var tweets = EnumerateSearchTweets(
                 q: $"{HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
