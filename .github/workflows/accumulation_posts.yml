@@ -31,8 +31,8 @@ jobs:
         git status
         git diff
         git add -A
-        git status
         git config --local user.email "example.com"
         git config --local user.name "bot"
         git commit -m "auto commit"
-        git pull
+        git pull --no-rebase
+        git push
