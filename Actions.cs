@@ -64,14 +64,12 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void NotificationMorning()
         {
-            using var tables = GetTables();
+            using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
 
             // Create new schedule
-            var schedules = tables.First(tbl => tbl.Name == "schedule");
-            var schedule = schedules.Add(ScheduleId);
-            var unusedTheme = tables
-                .First(tbl => tbl.Name == "theme")
-                .Where(thm => !schedules.Any(ev => ev["id_theme"] == thm["id"]));
+            var schedule = tables["schedule"].Add(ScheduleId);
+            var unusedTheme = tables["theme"]
+                .Where(thm => !tables["schedule"].Any(ev => ev["id_theme"] == thm["id"]));
             var theme = unusedTheme
                 .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == date) // 別の日を除外
                 .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == date)
@@ -80,8 +78,8 @@ namespace MakiOneDrawingBot
             schedule["date"] = date.ToString("yyyy/MM/dd");
 
             // Post tweet
-            var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
-            var theme2 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme2"];
+            var theme1 = tables["theme"][schedule["id_theme"]]["theme1"];
+            var theme2 = tables["theme"][schedule["id_theme"]]["theme2"];
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var morning = tokens.Statuses.Update(
                 status: $@"
@@ -110,14 +108,12 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void NotificationStart()
         {
-            using var tables = GetTables();
-            var schedule = tables
-                .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == ScheduleId);
+            using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
+            var schedule = tables["schedule"][ScheduleId];
 
             // Post tweet
-            var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
-            var theme2 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme2"];
+            var theme1 = tables["theme"][schedule["id_theme"]]["theme1"];
+            var theme2 = tables["theme"][schedule["id_theme"]]["theme2"];
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var start = tokens.Statuses.Update(
                 status: $@"
@@ -147,14 +143,10 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void NotificationFinish()
         {
-            using var tables = GetTables();
-            var schedule = tables
-                .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == ScheduleId);
+            using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
+            var schedule = tables["schedule"][ScheduleId];
 
             // Post tweet
-            var next = date + TimeSpan.FromDays(1);
-            while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var finish = tokens.Statuses.Update(
                 status: $@"
 {HASH_TAG} #ツルマキマキ
@@ -181,10 +173,8 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void AccumulationPosts()
         {
-            using var tables = GetTables();
-            var schedule = tables
-                .First(tbl => tbl.Name == "schedule")
-                .First(sch => sch["id"] == ScheduleId);
+            using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
+            var schedule = tables["schedule"][ScheduleId];
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
@@ -202,8 +192,6 @@ namespace MakiOneDrawingBot
                 .ToArray();
 
             // Post tweet
-            var next = date;
-            while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
                     ? $@"
@@ -250,7 +238,7 @@ namespace MakiOneDrawingBot
             }
 
             // Aggregate
-            var posts = tables.Find(tbl => tbl.Name == "post");
+            var posts = tables["post"];
             foreach (var tweet in tweets)
             {
                 var post = posts.Add(tweet.Id.ToString());
@@ -297,8 +285,7 @@ namespace MakiOneDrawingBot
                 .GroupBy(pst => pst["id_user"])
                 .Select(g =>
                 {
-                    var count = tables
-                        .First(tbl => tbl.Name == "schedule")
+                    var count = tables["schedule"]
                         .OrderByDescending(s => DateTime.Parse(s["date"]))
                         .TakeWhile(s => g.Any(pst => pst["id_schedule"] == s["id"]))
                         .Count();
@@ -397,7 +384,7 @@ namespace MakiOneDrawingBot
             while(max_id != null);
         }
 
-        public byte[] CreateTextImage(string text)
+        static byte[] CreateTextImage(string text)
         {
             using var image = Image.Load("image_template.png");
             image.Mutate(context =>
@@ -420,16 +407,6 @@ namespace MakiOneDrawingBot
             using var buffer = new MemoryStream();
             image.SaveAsPng(buffer);
             return buffer.ToArray();
-        }
-    
-        public DisposableList<Table> GetTables()
-        {
-            var service = new SheetsService(new SheetsService.Initializer()
-            {
-                HttpClientInitializer = GoogleCredential.FromJson(googleServiceAccountJwt).CreateScoped(new[]{ SheetsService.Scope.Spreadsheets }),
-            });
-            var tables = service.Spreadsheets.Get(DB_SHEET_ID).Execute().Sheets.Select(s => new Table(service.Spreadsheets, DB_SHEET_ID, s)).ToArray();
-            return new DisposableList<Table>(tables);
         }
     }
 }

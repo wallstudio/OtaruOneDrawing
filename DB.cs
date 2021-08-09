@@ -4,14 +4,30 @@ using System.Linq;
 using System.Collections.Generic;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using Google.Apis.Auth.OAuth2;
 
 namespace MakiOneDrawingBot
 {
+    class DB : DisposableDictionary<string, Table>
+    {
+        DB(IEnumerable<KeyValuePair<string, Table>> collection) : base(collection) {}
+
+        public static DB Get(string googleServiceAccountJwt, string dbSpreadSheetId)
+        {
+            var service = new SheetsService(new SheetsService.Initializer()
+            {
+                HttpClientInitializer = GoogleCredential.FromJson(googleServiceAccountJwt).CreateScoped(new[]{ SheetsService.Scope.Spreadsheets }),
+            });
+            var tables = service.Spreadsheets.Get(dbSpreadSheetId).Execute().Sheets.Select(s => new Table(service.Spreadsheets, dbSpreadSheetId, s)).ToArray();
+            return new DB(tables.ToDictionary(t => t.Name));
+        }
+    }
 
     class Table : IDisposable, IEnumerable<Entry>
     {
         public string Name => sheet.Properties.Title;
         public int? Id => sheet.Properties.SheetId;
+        public Entry this[string id] => this.First(e => e["id"] == id);
         public string this[int row, int column]
         {
             get => data.Values.ElementAtOrDefault(row).ElementAtOrDefault(column) as string;
