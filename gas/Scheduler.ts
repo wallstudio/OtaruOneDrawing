@@ -1,14 +1,14 @@
-function init()
+function init() : void
 {
   schedule("notificationMorning", new Date(), 9, 30);
 }
 
-function reset()
+function reset() : void
 {
   schedule("notificationMorning", getNext(new Date()), 9, 30);
 }
 
-function notificationMorning()
+function notificationMorning() : void
 {
   // 09:30
   const date = new Date();
@@ -16,7 +16,7 @@ function notificationMorning()
   schedule("notificationStart", date, 22, 0);
 }
 
-function notificationStart()
+function notificationStart() : void
 {
   // 22:00
   const date = new Date();
@@ -24,7 +24,7 @@ function notificationStart()
   schedule("notificationFinish", date, 25, 0);
 }
 
-function notificationFinish()
+function notificationFinish() : void
 {
   // 25:00 (01:00)
   const date = getYesterday();
@@ -32,7 +32,7 @@ function notificationFinish()
   schedule("accumulationPosts", date, 36, 45);
 }
 
-function accumulationPosts()
+function accumulationPosts() : void
 {
   // 36:45 (12:45)
   const date = getYesterday();
@@ -41,7 +41,7 @@ function accumulationPosts()
 }
 
 
-function run(workflowName, date, next)
+function run(workflowName : string, date : Date, next : Date) : void
 {
   const headers = {
       Authorization : `token ${getGithubToken()}`,
@@ -60,36 +60,36 @@ function run(workflowName, date, next)
   console.log(res.getResponseCode());
 }
 
-function schedule(funcName, date, h, m)
+function schedule(funcName : string, date : Date, h : number, m : number) : void
 {
   const schedule = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h, m);
   ScriptApp.newTrigger(funcName).timeBased().at(schedule).create();
   console.log(`Scheduled "${funcName}" at ${schedule.toLocaleString()}`);
 }
 
-function removeTrigger(funcName)
+function removeTrigger(funcName : string)
 {
   const trigger = ScriptApp.getProjectTriggers().find(t => t.getHandlerFunction() == funcName);
   ScriptApp.deleteTrigger(trigger);
   console.log(`Removed "${funcName}"`);
 }
 
-function getYesterday()
+function getYesterday() : Date
 {
   let date = new Date();
   date.setDate(date.getDate() - 1);
   return date;
 }
 
-function getNext(date)
+function getNext(date : Date) : Date
 {
   let next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1); // Tommorow
-  while((next.getDate() % 10) % 3 != 0) next.setDate(next.getDate() + 1);
+  while((next.getDate() % 10) % 3 != 0) next.setDate(next.getDate() + 1); // TODO:
   // while(next.getDate() % 10 != 3) next.setDate(next.getDate() + 1);
   return next;
 }
 
-function fomatDate(date)
+function fomatDate(date : Date) : string
 {
   return `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
 }
