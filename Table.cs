@@ -7,15 +7,6 @@ using Google.Apis.Sheets.v4.Data;
 
 namespace MakiOneDrawingBot
 {
-    class DisposableList<T> : List<T>, IDisposable where T : IDisposable
-    {
-        public DisposableList() : this(Array.Empty<T>()) {}
-        public DisposableList(IEnumerable<T> collection) : base(collection) {}
-        public void Dispose()
-        {
-            foreach (var item in this) item.Dispose();
-        }
-    }
 
     class Table : IDisposable, IEnumerable<Entry>
     {
