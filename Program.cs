@@ -71,9 +71,10 @@ namespace MakiOneDrawingBot
     class Actions
     {
         readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
-        readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
+        readonly string HASH_TAG = "#ツルマキマキ";
+        // readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
-        readonly string HELP_URL = "https_example_com";
+        readonly string HELP_URL = "https://github.com/wallstudio/MakiOneDrawingBot/blob/master/README.md";
         readonly string twitterApiKey;
         readonly string twitterApiSecret;
         readonly string bearerToken;
@@ -122,7 +123,7 @@ namespace MakiOneDrawingBot
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var morning = tokens.Statuses.Update(
                 status: $@"
-{HASH_TAG}
+{HASH_TAG} #ツルマキマキ
 今夜のわんどろのテーマ発表！
 
 今回のお題はこちらの二つ！
@@ -158,7 +159,7 @@ namespace MakiOneDrawingBot
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var start = tokens.Statuses.Update(
                 status: $@"
-{HASH_TAG}
+{HASH_TAG} #ツルマキマキ
 わんどろスタート！(｀・ω・´）
 
 今回のお題はこちらの二つ！
@@ -194,7 +195,7 @@ namespace MakiOneDrawingBot
             while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var finish = tokens.Statuses.Update(
                 status: $@"
-{HASH_TAG}
+{HASH_TAG} #ツルマキマキ
 わんどろ終了ーー！！( ´ ∀`)ﾉA
 
 投稿いただいたイラストは明日のお昼にRTします！！
@@ -233,7 +234,9 @@ namespace MakiOneDrawingBot
                 q: $"{HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
                 result_type: "recent",
                 until: DateTime.UtcNow.ToString("yyy-MM-dd"),
-                count: 100)
+                count: 100,
+                include_entities: true,
+                tweet_mode: TweetMode.Extended)
                 .Where(twt => since <= twt.CreatedAt && twt.CreatedAt <= until)
                 .ToArray();
 
@@ -243,8 +246,9 @@ namespace MakiOneDrawingBot
             var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
                     ? $@"
-{HASH_TAG}
+{HASH_TAG} #ツルマキマキ
 昨日のわんどろの投稿イラストをRTします！！！(ﾟ∇^*)
+{tweets.Length}作品の投稿をいただきました！
 
 次回は {next:MM/dd\(ddd\)} の予定です、お楽しみに！！
 
@@ -273,12 +277,14 @@ namespace MakiOneDrawingBot
             // Twitter
             foreach (var tweet in tweets)
             {
+                // TODO:
                 // tokens.Favorites.Create(tweet.Id);
                 // tokens.Statuses.Retweet(tweet.Id);
             }
             var followees = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
             foreach (var id in tweets.Select(s => s.User.Id).OfType<long>().Distinct().Where(id => !followees.Contains(id)))
             {
+                // TODO:
                 // tokens.Friendships.Create(user_id: id, follow: true);
             }
 
@@ -290,19 +296,39 @@ namespace MakiOneDrawingBot
                 post["id_status"] = tweet.Id.ToString();
                 post["id_schedule"] = schedule["id"];
                 post["id_user"] = tweet.User.Id.ToString();
+                post["ts_utc_post"] = tweet.CreatedAt.ToString();
                 post["user_display_name"] = tweet.User.Name;
                 post["user_screen_name"] = tweet.User.ScreenName;
                 post["url_user_icon"] = tweet.User.ProfileImageUrlHttps;
+                post["url_media"] = tweet.Entities?.Media?.FirstOrDefault()?.MediaUrlHttps;
             }
+            var userInfoTable = tokens.Users.Lookup(posts.Select(p => long.Parse(p["id_user"])).Distinct());
+            var recently = posts
+                .OrderByDescending(pst => DateTime.Parse(pst["ts_utc_post"]))
+                .Select(p =>
+                {
+                    var user = userInfoTable.First(u => u.Id == long.Parse(p["id_user"]));
+                    return new { user, post = p };
+                })
+                .ToArray();
             var postRanking = posts
                 .GroupBy(pst => pst["id_user"])
-                .Select(g => new { id = g.Key, posts = g, count = g.Count() })
+                .Select(g =>
+                {
+                    var user = userInfoTable.First(u => u.Id == long.Parse(g.Key));
+                    return new { id = g.Key, user, posts = g, count = g.Count() };
+                })
                 .OrderBy(info => info.count)
                 .ToArray();
             schedule["ranking_post"] = string.Join(",", postRanking.Select(p => p.id));
             var entryRanking = posts
                 .GroupBy(pst => pst["id_user"])
-                .Select(g => new { id = g.Key, posts = g, count = g.Select(p => p["id_schedule"]).Distinct().Count() })
+                .Select(g =>
+                {
+                    var count = g.Select(p => p["id_schedule"]).Distinct().Count();
+                    var user = userInfoTable.First(u => u.Id == long.Parse(g.Key));
+                    return new { id = g.Key, user, posts = g, count };
+                })
                 .OrderBy(info => info.count)
                 .ToArray();
             schedule["ranking_entry"] = string.Join(",", entryRanking.Select(p => p.id));
@@ -315,16 +341,83 @@ namespace MakiOneDrawingBot
                         .OrderByDescending(s => DateTime.Parse(s["date"]))
                         .TakeWhile(s => g.Any(pst => pst["id_schedule"] == s["id"]))
                         .Count();
-                    return new { id = g.Key, posts = g, count };
+                    var user = userInfoTable.First(u => u.Id == long.Parse(g.Key));
+                    return new { id = g.Key, user, posts = g, count };
                 })
                 .OrderBy(info => info.count)
                 .ToArray();
             schedule["ranking_continue"] = string.Join(",", continueRanking.Select(p => p.id));
             
-            var file = File.ReadAllText("README.md", Encoding.UTF8);
-            file += "🤔\n";
-            File.WriteAllText("README.md", file, Encoding.UTF8);
+
+            File.WriteAllText("README.md", @$"
+# {HASH_TAG.TrimStart("#".ToCharArray())}
+
+[基本ルール](#基本ルール)
+
+## 最近の作品
+
+| 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ |
+| :---: | :---: | :---: | :---: | :---: |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedMedia(recently.ElementAtOrDefault(i)?.user?.ScreenName, recently.ElementAtOrDefault(i)?.post?["id_status"], recently.ElementAtOrDefault(i)?.post?["url_media"])))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(recently.ElementAtOrDefault(i)?.user)))} |
+
+## ランキング
+
+### 🏆Best of 作品数🏆
+
+沢山のマキマキイラスト作品を描き上げた方々です！
+
+| 🥇 | 🥈 | 🥉 |
+| :---: | :---: | :---: |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(postRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(postRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{postRanking.ElementAtOrDefault(i).count} 作品"))} |
+
+### 🏆Best of 参加回数🏆
+
+イベントに沢山参加してくださった方々です！
+
+| 🥇 | 🥈 | 🥉 |
+| :---: | :---: | :---: |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(entryRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(entryRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{entryRanking.ElementAtOrDefault(i).count} 回"))} |
+
+### 🏆Best of 継続数🏆
+
+継続的に参加してくださっている方々です！
+
+| 🥇 | 🥈 | 🥉 |
+| :---: | :---: | :---: |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(continueRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(continueRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{continueRanking.ElementAtOrDefault(i).count} 回連続"))} |
+
+## 基本ルール
+
+1. 毎月3日、13日、23日に開催されます。
+1. 当日の朝09:30に{LinkedName(me)}から「お題」が発表されます。
+1. その後、22:00に{LinkedName(me)}からスタートの告知ツイートがされます。
+1. 25:00までに「お題」にちなんだイラストを描き、ハッシュタグ「[{HASH_TAG}](https://twitter.com/hashtag/{HASH_TAG.TrimStart("#".ToCharArray())})」ツイートしてください。
+1. 翌日、投稿された作品を集計しリツイート、及びランキングに反映させていただきます。
+
+### 注意点
+
+- お題については厳密に遵守していただく必要はありません。
+- 基本的にはイラスト向けですが、文章、音楽などツイートの形式になっていれば何でもかまいません。
+- 集計の都合上、一つの作品を分割投稿する場合には、ハッシュタグは一つ目にのみ付けてください。複数作品を投稿する場合はそれぞれに付けてください。
+- R-18作品の投稿を妨げることはありませんが、ツイート内に「ｺｯｼｮﾘ」という文字列を含めていただけると助かります。
+- R-18作品はリツイート、及び集計の対象外とさせていただきます。
+- 本イベントにおいて発生した損害などに関しましては一切責任を負いませんのでご了承ください。
+- 過去に開催されていた類似イベントとは関係なく運営者も異なります。
+- その他ご不明な点等がありましたら、リプライ、DMなどでお問い合わせください。
+
+            ", Encoding.UTF8);
         }
+
+        string LinkedMedia(string screenName, string statusId, string mediaUrl) => $"[![]({mediaUrl}:thumb)](https://twitter.com/{screenName}/status/{statusId})";
+        string LinkedName(User user) => $"[@{user?.ScreenName}](https://twitter.com/{user?.ScreenName})";
+        string LinkedImage(User user) => $"[![@{user?.ScreenName}]({user?.ProfileImageUrlHttps.Replace("_normal.jpg", "_bigger.jpg")})](https://twitter.com/{user?.ScreenName})";
 
         IEnumerable<Status> EnumerateSearchTweets(string q, string geocode = null, string lang = null, string locale = null, string result_type = null, int? count = null, string until = null, long? since_id = null, long? max_id = null, bool? include_entities = null, bool? include_ext_alt_text = null, TweetMode? tweet_mode = null)
         {
