@@ -352,7 +352,12 @@ namespace MakiOneDrawingBot
             File.WriteAllText("README.md", @$"
 # {HASH_TAG.TrimStart("#".ToCharArray())}
 
-[基本ルール](#基本ルール)
+[![NotificationMorning](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml)
+[![NotificationStart](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_start.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_start.yml)
+[![NotificationFinish](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_finish.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_finish.yml)
+[![AccumulationPosts](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/accumulation_posts.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/accumulation_posts.yml)
+
+[📝基本ルール](#基本ルール)
 
 ## 最近の作品
 
