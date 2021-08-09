@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Linq;
 using CoreTweet;
@@ -372,9 +372,9 @@ namespace MakiOneDrawingBot
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(postRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(postRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{postRanking.ElementAtOrDefault(i).count} 作品"))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedImage(postRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(postRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{postRanking.ElementAtOrDefault(i).count} 作品"))} |
 
 ### 🏆Best of 参加回数🏆
 
@@ -382,9 +382,9 @@ namespace MakiOneDrawingBot
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(entryRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(entryRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{entryRanking.ElementAtOrDefault(i).count} 回"))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedImage(entryRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(entryRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{entryRanking.ElementAtOrDefault(i).count} 回"))} |
 
 ### 🏆Best of 継続数🏆
 
@@ -392,9 +392,9 @@ namespace MakiOneDrawingBot
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedImage(continueRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => LinkedName(continueRanking.ElementAtOrDefault(i).user)))} |
-| {string.Join(" | ", Enumerable.Range(0, 5).Select(i => $"{continueRanking.ElementAtOrDefault(i).count} 回連続"))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedImage(continueRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(continueRanking.ElementAtOrDefault(i).user)))} |
+| {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{continueRanking.ElementAtOrDefault(i).count} 回連続"))} |
 
 ## 基本ルール
 
