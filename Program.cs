@@ -110,6 +110,8 @@ namespace MakiOneDrawingBot
                 .First(tbl => tbl.Name == "theme")
                 .Where(thm => !schedules.Any(ev => ev["id_theme"] == thm["id"]));
             var theme = unusedTheme
+                .Where(thm => !DateTime.TryParse(thm["date"], out var date) || date == JpNowDate) // 別の日を除外
+                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var date) && date == JpNowDate)
                 .First();
             schedule["id_theme"] = theme["id"];
             schedule["date"] = JpNowDate.ToString("yyyy/MM/dd");
