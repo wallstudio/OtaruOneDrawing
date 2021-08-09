@@ -29,11 +29,6 @@ namespace MakiOneDrawingBot
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
-            foreach (var env in args)
-            {
-                Console.WriteLine($"arg:{env}");
-            }
-
             var command = args.SkipWhile(a => a != "--command").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--command");
             var actions = new Actions(
                 twitterApiKey: args.SkipWhile(a => a != "--twitter-api-key").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--twitter-api-key"),
@@ -76,7 +71,7 @@ namespace MakiOneDrawingBot
     class Actions
     {
         readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
-        readonly string HASH_TAG = "#レコスタ"; // TODO:
+        readonly string HASH_TAG = "#＿＿マ＿深夜の真剣お絵描き60分勝負";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https_example_com";
         readonly string twitterApiKey;
