@@ -39,9 +39,9 @@ jobs:
         --access-token ${{ secrets.ACCESS_TOKEN }}
         --access-token-secret ${{ secrets.ACCESS_TOKEN_SECRET }}
         --google-service-account-jwt ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}
-        --date ${{ github.event.inputs.date }}
-        --next ${{ github.event.inputs.next }}
-        --general ${{ github.event.inputs.general }}
+        --date "${{ github.event.inputs.date }}"
+        --next "${{ github.event.inputs.next }}"
+        --general "${{ github.event.inputs.general }}"
     - name: Git
       run: |
         git status
