@@ -11,6 +11,13 @@ using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.Fonts;
+using Google.Apis.Auth.OAuth2;
+using System.Threading.Tasks;
+using Google.Apis.Sheets.v4;
+using System.Threading;
+using System.Text;
+using Color = SixLabors.ImageSharp.Color;
+using System.Globalization;
 
 namespace MakiOneDrawingBot
 {
@@ -20,6 +27,8 @@ namespace MakiOneDrawingBot
     {
         static void Main(string[] args)
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
             foreach (var env in args)
             {
                 Console.WriteLine($"arg:{env}");
@@ -35,7 +44,8 @@ namespace MakiOneDrawingBot
                 twitterApiSecret: args.SkipWhile(a => a != "--twitter-api-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--twitter-api-secret"),
                 bearerToken: args.SkipWhile(a => a != "--bearer-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--bearer-token"),
                 accessToken: args.SkipWhile(a => a != "--access-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token"),
-                accessTokenSecret: args.SkipWhile(a => a != "--access-token-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token-secret"));
+                accessTokenSecret: args.SkipWhile(a => a != "--access-token-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token-secret"),
+                googleServiceAccountJwt: args.SkipWhile(a => a != "--google-service-account-jwt").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--google-service-account-jwt"));
 
             switch (command)
             {
@@ -61,10 +71,6 @@ namespace MakiOneDrawingBot
                     actions.NotificationFinish();
                     actions.AccumulationPosts();
                     break;
-                case "CreateTextImage":
-                    File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ\nカワイイヤッター！"));
-                    // File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ⚡🔥\nカワイイヤッター！"));
-                    break;
                 default:
                     throw new ArgumentException($"--command={command}");
             }
@@ -73,22 +79,29 @@ namespace MakiOneDrawingBot
 
     class Actions
     {
-        readonly string HASH_TAG = "H弦巻マキ深夜の真剣お絵描き60分勝負";
+        readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
+        readonly string HASH_TAG = "#レコスタ"; // TODO:
+        // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https_example_com";
         readonly string twitterApiKey;
         readonly string twitterApiSecret;
         readonly string bearerToken;
         readonly string accessToken;
         readonly string accessTokenSecret;
+        readonly string googleServiceAccountJwt;
         readonly Tokens tokens;
 
-        public Actions(string twitterApiKey, string twitterApiSecret, string bearerToken, string accessToken, string accessTokenSecret)
+        DateTime JpNow => DateTime.UtcNow + TimeSpan.FromHours(+9);
+        DateTime JpNowDate => JpNow.Date;
+
+        public Actions(string twitterApiKey, string twitterApiSecret, string bearerToken, string accessToken, string accessTokenSecret, string googleServiceAccountJwt)
         {
             this.twitterApiKey = twitterApiKey;
             this.twitterApiSecret = twitterApiSecret;
             this.bearerToken = bearerToken;
             this.accessToken = accessToken;
             this.accessTokenSecret = accessTokenSecret;
+            this.googleServiceAccountJwt = Encoding.UTF8.GetString(Convert.FromBase64String(googleServiceAccountJwt));
             tokens = Tokens.Create(twitterApiKey, twitterApiSecret, accessToken, accessTokenSecret);
         }
 
@@ -97,9 +110,22 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void NotificationMorning()
         {
-            // TODO: Read theme from DB
-            var theme1 = "マキマキ";
-            var theme2 = "ツルマキマキ";
+            using var tables = GetTables();
+
+            // Create new schedule
+            var schedules = tables.First(tbl => tbl.Name == "schedule");
+            var schedule = schedules.Add(JpNowDate.ToString("yyyyMMdd"));
+            var unusedTheme = tables
+                .First(tbl => tbl.Name == "theme")
+                .Where(thm => !schedules.Any(ev => ev["id_theme"] == thm["id"]));
+            var theme = unusedTheme
+                .First();
+            schedule["id_theme"] = theme["id"];
+            schedule["date"] = JpNowDate.ToString("yyyy/MM/dd");
+
+            // Post tweet
+            var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
+            var theme2 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme2"];
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var morning = tokens.Statuses.Update(
                 status: $@"
@@ -113,25 +139,29 @@ namespace MakiOneDrawingBot
 ▼イベントルール詳細
 {HELP_URL}
                 ".Trim(),
-                media_ids: new []{ uploadResult.MediaId },
+                media_ids: new[] { uploadResult.MediaId },
                 auto_populate_reply_metadata: true);
+
+            // Record
+            schedule["id_morning_status"] = morning.Id.ToString();
+            schedule["ts_morning_status"] = JpNow.ToString();
+            schedule["ts_utc_morning_status"] = DateTime.UtcNow.ToString();
         }
+
 
         /// <summary>
         /// ワンドロ開始のツイートを投げる
         /// </summary>
         public void NotificationStart()
         {
-            var me = tokens.Account.VerifyCredentials();
-            var morning = EnumerateSearchTweets(
-                q: $"{HASH_TAG} 今夜のわんどろのテーマ発表 from:{me.ScreenName} exclude:retweets",
-                result_type: "recent",
-                until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
-                count: 100).FirstOrDefault();
+            using var tables = GetTables();
+            var schedule = tables
+                .First(tbl => tbl.Name == "schedule")
+                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd"));
 
-            // TODO: Read theme from DB
-            var theme1 = "マキマキ";
-            var theme2 = "ツルマキマキ";
+            // Post tweet
+            var theme1 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme1"];
+            var theme2 = tables.First(tbl => tbl.Name == "theme").First(thm => thm["id"] == schedule["id_theme"])["theme2"];
             var uploadResult = tokens.Media.Upload(CreateTextImage($"{theme1}\n\n{theme2}"));
             var start = tokens.Statuses.Update(
                 status: $@"
@@ -147,8 +177,13 @@ namespace MakiOneDrawingBot
 {HELP_URL}
                 ".Trim(),
                 media_ids: new []{ uploadResult.MediaId },
-                in_reply_to_status_id: morning?.Id,
+                in_reply_to_status_id: long.Parse(schedule["id_morning_status"]),
                 auto_populate_reply_metadata: true);
+
+            // Record
+            schedule["id_start_status"] = start.Id.ToString();
+            schedule["ts_start_status"] = JpNow.ToString();
+            schedule["ts_utc_start_status"] = DateTime.UtcNow.ToString();
         }
 
         /// <summary>
@@ -156,14 +191,13 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void NotificationFinish()
         {
-            var me = tokens.Account.VerifyCredentials();
-            var start = EnumerateSearchTweets(
-                q: $"{HASH_TAG} わんどろスタート from:{me.ScreenName} exclude:retweets",
-                result_type: "recent",
-                until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
-                count: 100).FirstOrDefault();
+            using var tables = GetTables();
+            var schedule = tables
+                .First(tbl => tbl.Name == "schedule")
+                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd"));
 
-            var next = DateTime.Now.Date;
+            // Post tweet
+            var next = JpNowDate + TimeSpan.FromDays(1);
             while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var finish = tokens.Statuses.Update(
                 status: $@"
@@ -176,9 +210,14 @@ namespace MakiOneDrawingBot
 ▼イベントルール詳細
 {HELP_URL}
                 ".Trim(),
-                in_reply_to_status_id: start?.Id,
+                in_reply_to_status_id: long.Parse(schedule["id_start_status"]),
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
+                
+            // Record
+            schedule["id_finish_status"] = finish.Id.ToString();
+            schedule["ts_finish_status"] = JpNow.ToString();
+            schedule["ts_utc_finish_status"] = DateTime.UtcNow.ToString();
         }
 
         /// <summary>
@@ -186,19 +225,27 @@ namespace MakiOneDrawingBot
         /// </summary>
         public void AccumulationPosts()
         {
-            var me = tokens.Account.VerifyCredentials();
-            var tweets = EnumerateSearchTweets(
-                q: $"{HASH_TAG} exclude:retweets", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
-                result_type: "recent",
-                until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
-                count: 100).ToArray();
+            using var tables = GetTables();
+            var schedule = tables
+                .First(tbl => tbl.Name == "schedule")
+                // .First(sch => sch["id"] == (JpNowDate - TimeSpan.FromDays(1)).ToString("yyyyMMdd"));
+                .First(sch => sch["id"] == JpNowDate.ToString("yyyyMMdd")); // TODO:
 
-            var finish = EnumerateSearchTweets(
-                q: $"{HASH_TAG} わんどろ終了 from:{me.ScreenName} exclude:retweets",
+            // Collection
+            var me = tokens.Account.VerifyCredentials();
+            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15) - TimeSpan.FromDays(1); // TODO:
+            // var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
+            var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(15);
+            var tweets = EnumerateSearchTweets(
+                q: $"{HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
                 result_type: "recent",
-                until: (DateTime.Now.Date - TimeSpan.FromDays(1) + TimeSpan.FromHours(22)).ToUniversalTime().ToString("yyy-MM-dd"),
-                count: 100).FirstOrDefault();
-            var next = DateTime.Now.Date;
+                until: DateTime.UtcNow.ToString("yyy-MM-dd"),
+                count: 100)
+                .Where(twt => since <= twt.CreatedAt && twt.CreatedAt <= until)
+                .ToArray();
+
+            // Post tweet
+            var next = JpNowDate;
             while(next.Day % 10 != 3) next += TimeSpan.FromDays(1);
             var preRetweet = tokens.Statuses.Update(
                 status: (tweets.Length > 0
@@ -221,25 +268,67 @@ namespace MakiOneDrawingBot
 ▼イベントルール詳細
 {HELP_URL}
                 ").Trim(),
-                in_reply_to_status_id: finish?.Id,
+                in_reply_to_status_id: long.Parse(schedule["id_finish_status"]),
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
 
+            // Record
+            schedule["id_accumulation_status"] = preRetweet.Id.ToString();
+            schedule["ts_accumulation_status"] = JpNow.ToString();
+            schedule["ts_utc_accumulation_status"] = DateTime.UtcNow.ToString();
+
+            // Twitter
             foreach (var tweet in tweets)
             {
                 // tokens.Favorites.Create(tweet.Id);
                 // tokens.Statuses.Retweet(tweet.Id);
             }
-
             var followees = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
             foreach (var id in tweets.Select(s => s.User.Id).OfType<long>().Distinct().Where(id => !followees.Contains(id)))
             {
                 // tokens.Friendships.Create(user_id: id, follow: true);
             }
 
-            // TODO: Read from DB
-            // TODO: Aggregate
-            // TODO: Write to DB + Doc
+            // Aggregate
+            var posts = tables.Find(tbl => tbl.Name == "post");
+            foreach (var tweet in tweets)
+            {
+                var post = posts.Add(tweet.Id.ToString());
+                post["id_status"] = tweet.Id.ToString();
+                post["id_schedule"] = schedule["id"];
+                post["id_user"] = tweet.User.Id.ToString();
+                post["user_display_name"] = tweet.User.Name;
+                post["user_screen_name"] = tweet.User.ScreenName;
+                post["url_user_icon"] = tweet.User.ProfileImageUrlHttps;
+            }
+            var postRanking = posts
+                .GroupBy(pst => pst["id_user"])
+                .Select(g => new { id = g.Key, posts = g, count = g.Count() })
+                .OrderBy(info => info.count)
+                .ToArray();
+            schedule["ranking_post"] = string.Join(",", postRanking.Select(p => p.id));
+            var entryRanking = posts
+                .GroupBy(pst => pst["id_user"])
+                .Select(g => new { id = g.Key, posts = g, count = g.Select(p => p["id_schedule"]).Distinct().Count() })
+                .OrderBy(info => info.count)
+                .ToArray();
+            schedule["ranking_entry"] = string.Join(",", entryRanking.Select(p => p.id));
+            var continueRanking = posts
+                .GroupBy(pst => pst["id_user"])
+                .Select(g =>
+                {
+                    var count = tables
+                        .First(tbl => tbl.Name == "schedule")
+                        .OrderByDescending(s => DateTime.Parse(s["date"]))
+                        .TakeWhile(s => g.Any(pst => pst["id_schedule"] == s["id"]))
+                        .Count();
+                    return new { id = g.Key, posts = g, count };
+                })
+                .OrderBy(info => info.count)
+                .ToArray();
+            schedule["ranking_continue"] = string.Join(",", continueRanking.Select(p => p.id));
+            
+            // TODO: Write to Doc
         }
 
         IEnumerable<Status> EnumerateSearchTweets(string q, string geocode = null, string lang = null, string locale = null, string result_type = null, int? count = null, string until = null, long? since_id = null, long? max_id = null, bool? include_entities = null, bool? include_ext_alt_text = null, TweetMode? tweet_mode = null)
@@ -254,7 +343,7 @@ namespace MakiOneDrawingBot
             while(max_id != null);
         }
 
-        public static byte[] CreateTextImage(string text)
+        public byte[] CreateTextImage(string text)
         {
             using var image = Image.Load("image_template.png");
             image.Mutate(context =>
@@ -277,6 +366,16 @@ namespace MakiOneDrawingBot
             using var buffer = new MemoryStream();
             image.SaveAsPng(buffer);
             return buffer.ToArray();
+        }
+    
+        public DisposableList<Table> GetTables()
+        {
+            var service = new SheetsService(new SheetsService.Initializer()
+            {
+                HttpClientInitializer = GoogleCredential.FromJson(googleServiceAccountJwt).CreateScoped(new[]{ SheetsService.Scope.Spreadsheets }),
+            });
+            var tables = service.Spreadsheets.Get(DB_SHEET_ID).Execute().Sheets.Select(s => new Table(service.Spreadsheets, DB_SHEET_ID, s)).ToArray();
+            return new DisposableList<Table>(tables);
         }
     }
 }
