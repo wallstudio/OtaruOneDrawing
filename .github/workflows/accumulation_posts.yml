@@ -26,4 +26,13 @@ jobs:
         --access-token ${{ secrets.ACCESS_TOKEN }}
         --access-token-secret ${{ secrets.ACCESS_TOKEN_SECRET }}
         --google-service-account-jwt ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}
-        
+    - name: Git
+      run: |
+        git status
+        git diff head
+        git add *
+        git status
+        git config --local user.email "example.com"
+        git config --local user.name "bot"
+        git commit -m "auto commit"
+        git pull

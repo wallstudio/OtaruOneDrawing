@@ -321,7 +321,9 @@ namespace MakiOneDrawingBot
                 .ToArray();
             schedule["ranking_continue"] = string.Join(",", continueRanking.Select(p => p.id));
             
-            // TODO: Write to Doc
+            var file = File.ReadAllText("README.md", Encoding.UTF8);
+            file += "🤔\n";
+            File.WriteAllText("README.md", file, Encoding.UTF8);
         }
 
         IEnumerable<Status> EnumerateSearchTweets(string q, string geocode = null, string lang = null, string locale = null, string result_type = null, int? count = null, string until = null, long? since_id = null, long? max_id = null, bool? include_entities = null, bool? include_ext_alt_text = null, TweetMode? tweet_mode = null)
