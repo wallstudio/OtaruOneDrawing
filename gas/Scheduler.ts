@@ -47,13 +47,13 @@ function run(workflowName, date, next)
       Authorization : `token ${getGithubToken()}`,
       Accept : "application/vnd.github.v3+json"
   };
-  const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows`, { method: "GET", headers: headers });
+  const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows`, { method: "get", headers: headers });
   const workflows = JSON.parse(workflowsResponse.getContentText());
   const workflow = workflows.workflows.find(w => w.name == workflowName);
 
   let res = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows/${workflow.id}/dispatches`,
   {
-    method: "POST",
+    method: "post",
     headers: headers,
     payload: JSON.stringify({ ref: "master", inputs: { date: fomatDate(date), next: fomatDate(next), general: "From GAS trigger." } })
   });

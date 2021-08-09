@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "lib": ["es2019"],
+        "experimentalDecorators": true
+    },
+
+    "include": [ "**/*" ],
+    "exclude": []
+}

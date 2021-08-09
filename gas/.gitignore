@@ -120,3 +120,5 @@ dist
 .pnp.*
 
 Secret.gs.js
+Secret.gs.ts
+Secret.ts
