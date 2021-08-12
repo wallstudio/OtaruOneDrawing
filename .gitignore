@@ -7,3 +7,4 @@ obj/
 bin/
 font/*
 !font/Corporate-Logo-Rounded.ttf
+!font/TwemojiMozilla.ttf

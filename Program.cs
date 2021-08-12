@@ -2,6 +2,7 @@
 using System.Linq;
 using SixLabors.ImageSharp;
 using System.Globalization;
+using System.IO;
 
 namespace MakiOneDrawingBot
 {
@@ -48,6 +49,9 @@ namespace MakiOneDrawingBot
                     actions.NotificationStart();
                     actions.NotificationFinish();
                     actions.AccumulationPosts();
+                    break;
+                case nameof(Actions.CreateTextImage):
+                    File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ⚡\nかわいいやったー！😇"));
                     break;
                 default:
                     throw new ArgumentException($"--command={command}");

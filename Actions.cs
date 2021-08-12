@@ -384,7 +384,7 @@ namespace MakiOneDrawingBot
             while(max_id != null);
         }
 
-        static byte[] CreateTextImage(string text)
+        public static byte[] CreateTextImage(string text)
         {
             using var image = Image.Load("image_template.png");
             image.Mutate(context =>
@@ -392,17 +392,14 @@ namespace MakiOneDrawingBot
                 var font = new FontCollection().Install("font/Corporate-Logo-Rounded.ttf");
                 var option = new DrawingOptions();
                 option.TextOptions.VerticalAlignment = VerticalAlignment.Center;
-                option.TextOptions.HorizontalAlignment = HorizontalAlignment.Center;
-                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoEmoji-Regular.ttf"));
-                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoColorEmoji.ttf"));
-                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/NotoColorEmoji_WindowsCompatible.ttf"));
-                // option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/seguiemj.ttf"));
+                option.TextOptions.HorizontalAlignment = HorizontalAlignment.Left;
+                option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/TwemojiMozilla.ttf")); // 幅計算がうまく行ってないっぽい
                 context.DrawText(
                     options: option,
                     text: text,
                     font: font.CreateFont(120, FontStyle.Bold),
                     color: Color.Black,
-                    location: new PointF(image.Width/2, image.Height/3));
+                    location: new PointF(image.Width/10, image.Height/3));
             });
             using var buffer = new MemoryStream();
             image.SaveAsPng(buffer);
