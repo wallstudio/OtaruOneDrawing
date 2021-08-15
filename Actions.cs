@@ -12,6 +12,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
 using System.Text;
 using Color = SixLabors.ImageSharp.Color;
+using System.Globalization;
 
 namespace MakiOneDrawingBot
 {
@@ -28,12 +29,12 @@ namespace MakiOneDrawingBot
         readonly string accessToken;
         readonly string accessTokenSecret;
         readonly string googleServiceAccountJwt;
-        readonly DateTime date;
-        readonly DateTime next;
+        readonly DateTime eventDate;
+        readonly DateTime nextDate;
         readonly string general;
         readonly Tokens tokens;
 
-        string ScheduleId => date.ToString("yyyy_MM_dd");
+        string ScheduleId => eventDate.ToString("yyyy_MM_dd");
         string TimeStamp => (DateTime.UtcNow + TimeSpan.FromHours(+9)).ToString();
         string TimeStampUtc => DateTime.UtcNow.ToString();
 
@@ -46,16 +47,8 @@ namespace MakiOneDrawingBot
             this.accessTokenSecret = accessTokenSecret;
             this.googleServiceAccountJwt = Encoding.UTF8.GetString(Convert.FromBase64String(googleServiceAccountJwt));
             tokens = Tokens.Create(twitterApiKey, twitterApiSecret, accessToken, accessTokenSecret);
-            this.date = !string.IsNullOrEmpty(date) ? DateTime.Parse(date) : (DateTime.UtcNow + TimeSpan.FromHours(+9)).Date;
-            if(!string.IsNullOrEmpty(next))
-            {
-                this.next = DateTime.Parse(next);
-            }
-            else
-            {
-                this.next = this.date;
-                while(this.next.Day % 10 != 3) this.next += TimeSpan.FromDays(1);
-            }
+            eventDate = DateTime.Parse(date);
+            nextDate = DateTime.Parse(next);
             this.general = general;
         }
 
@@ -71,11 +64,11 @@ namespace MakiOneDrawingBot
             var unusedTheme = tables["theme"]
                 .Where(thm => !tables["schedule"].Any(ev => ev["id_theme"] == thm["id"]));
             var theme = unusedTheme
-                .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == date) // 別の日を除外
-                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == date)
+                .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == eventDate.Date) // 別の日を除外
+                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == eventDate.Date)
                 .First();
             schedule["id_theme"] = theme["id"];
-            schedule["date"] = date.ToString("yyyy/MM/dd");
+            schedule["date"] = eventDate.ToString("yyyy/MM/dd");
 
             // Post tweet
             var theme1 = tables["theme"][schedule["id_theme"]]["theme1"];
@@ -153,7 +146,7 @@ namespace MakiOneDrawingBot
 わんどろ終了ーー！！( ´ ∀`)ﾉA
 
 投稿いただいたイラストは明日のお昼にRTします！！
-次回は {next:MM/dd\(ddd\)} の予定です、お楽しみに！！
+次回は {nextDate:MM/dd\(ddd\)} の予定です、お楽しみに！！
 
 ▼イベントルール詳細
 {HELP_URL}
@@ -199,7 +192,7 @@ namespace MakiOneDrawingBot
 昨日のわんどろの投稿イラストをRTします！！！(ﾟ∇^*)
 {tweets.Length}作品の投稿をいただきました！
 
-次回は {next:MM/dd\(ddd\)} の予定です、お楽しみに！！
+次回は {nextDate:MM/dd\(ddd\)} の予定です、お楽しみに！！
 
 ▼イベントルール詳細
 {HELP_URL}
@@ -209,7 +202,7 @@ namespace MakiOneDrawingBot
 昨日のわんどろの投稿イラストをRT……
 って、誰も投稿してくれなかったみたい…(´；ω；｀)
 
-次回は {next:MM/dd\(ddd\)} の予定です、よろしくおねがいします。
+次回は {nextDate:MM/dd\(ddd\)} の予定です、よろしくおねがいします。
 
 ▼イベントルール詳細
 {HELP_URL}

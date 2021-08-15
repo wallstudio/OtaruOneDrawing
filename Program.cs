@@ -3,6 +3,7 @@ using System.Linq;
 using SixLabors.ImageSharp;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 
 namespace MakiOneDrawingBot
 {
@@ -12,7 +13,7 @@ namespace MakiOneDrawingBot
     {
         static void Main(string[] args)
         {
-            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.CurrentCulture = new CultureInfo("ja-JP");
 
             var command = args.SkipWhile(a => a != "--command").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--command");
             var actions = new Actions(
@@ -22,9 +23,16 @@ namespace MakiOneDrawingBot
                 accessToken: args.SkipWhile(a => a != "--access-token").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token"),
                 accessTokenSecret: args.SkipWhile(a => a != "--access-token-secret").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--access-token-secret"),
                 googleServiceAccountJwt: args.SkipWhile(a => a != "--google-service-account-jwt").Skip(1).FirstOrDefault() ?? throw new ArgumentException("--google-service-account-jwt"),
-                date: args.SkipWhile(a => a != "--date").Skip(1).FirstOrDefault(),
-                next: args.SkipWhile(a => a != "--next").Skip(1).FirstOrDefault(),
+                date: args.SkipWhile(a => a != "--eventDate").Skip(1).FirstOrDefault(),
+                next: args.SkipWhile(a => a != "--nextDate").Skip(1).FirstOrDefault(),
                 general: args.SkipWhile(a => a != "--general").Skip(1).FirstOrDefault());
+
+            if(DateTime.TryParse(args.SkipWhile(a => a != "--actionDate").Skip(1).FirstOrDefault(), out var actionDate))
+            {
+                var delay = actionDate - DateTime.Now;
+                if(delay.TotalMinutes > 5) throw new Exception($"too long delay {delay} ({actionDate} - {DateTime.Now})");
+                Thread.Sleep(delay);
+            }
 
             switch (command)
             {

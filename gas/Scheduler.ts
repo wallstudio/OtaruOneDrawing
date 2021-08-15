@@ -1,95 +1,82 @@
-function init() : void
+
+function main(date : Date = new Date())
 {
-  schedule("notificationMorning", new Date(), 9, 30);
+	const span = 5;
+	const calender = CalendarApp.getCalendarById("22326mbg1cbd88bi5s7e9cklbg@group.calendar.google.com");
+	const searchStart = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate() - 1);
+	const searchEnd = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
+	const events = calender.getEvents(searchStart, searchEnd);
+
+	const previousEvent = events.reverse().find(i => i.getStartTime().getDate() < date.getDate());
+	const nextEvent = events.find(i => i.getEndTime().getDate() > date.getDate());
+	const toDayEvent = events.find(i => i.getStartTime().getDate() == date.getDate() || i.getEndTime().getDate() == date.getDate());
+	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) > 0  && approximately(i.getEndTime(), span, date) < 0);
+
+	const morningTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 30);
+	const accumulateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 45);
+	if(toDayEvent != null
+		&& 0 == approximately(morningTime, span, date))
+	{
+		run("NotificationMorning", morningTime, toDayEvent.getStartTime(), nextEvent?.getStartTime());
+	}
+	if(runningEvent != null
+		&& 0 == approximately(runningEvent.getStartTime(), span, date))
+	{
+		run("NotificationStart", runningEvent.getStartTime(), runningEvent.getStartTime(), nextEvent?.getStartTime());
+	}
+	if(runningEvent != null
+		&& 0 == approximately(runningEvent.getEndTime(), span, date))
+	{
+		run("NotificationFinish", runningEvent.getEndTime(), runningEvent.getStartTime(), nextEvent?.getStartTime());
+	}
+	if(previousEvent?.getStartTime()?.getDate() == date.getDate() - 1
+		&& 0 == approximately(accumulateTime, span, date))
+	{
+		run("AccumulationPosts", accumulateTime, previousEvent.getStartTime(), nextEvent?.getStartTime());
+	}
 }
 
-function reset() : void
+function run(workflowName : string, actionDate : Date | GoogleAppsScript.Base.Date, eventDate : Date | GoogleAppsScript.Base.Date, nextDate : Date | GoogleAppsScript.Base.Date) : void
 {
-  schedule("notificationMorning", getNext(new Date()), 9, 30);
+	console.log(`workflow:${workflowName}, actionDate: ${actionDate}, eventDate:${eventDate}, nextDate:${nextDate}`);
+	const headers = {
+			Authorization : `token ${getGithubToken()}`,
+			Accept : "application/vnd.github.v3+json"
+	};
+	const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows`, { method: "get", headers: headers });
+	const workflows : any[] = JSON.parse(workflowsResponse.getContentText()).workflows;
+	const workflow = workflows.find(w => w.name == "Main");
+
+	let res = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows/${workflow.id}/dispatches`,
+	{
+		method: "post",
+		headers: headers,
+		payload: JSON.stringify({ ref: "master", inputs:
+		{
+			command: workflowName,
+			actionDate : `${actionDate.getFullYear()}/${actionDate.getMonth()}/${actionDate.getDate()} ${actionDate.getHours()}:${actionDate.getMinutes()} +09:00`,
+			eventDate: `${eventDate.getFullYear()}/${eventDate.getMonth()}/${eventDate.getDate()} ${eventDate.getHours()}:${eventDate.getMinutes()} +09:00`,
+			nextDate: `${nextDate.getFullYear()}/${nextDate.getMonth()}/${nextDate.getDate()} ${nextDate.getHours()}:${nextDate.getMinutes()} +09:00`,
+			general: "From GAS trigger."
+		}})
+	});
+	console.log(`${res.getResponseCode()}`);
 }
 
-function notificationMorning() : void
+function approximately(ref : Date | GoogleAppsScript.Base.Date, span : number, date : Date) : number
 {
-  // 09:30
-  const date = new Date();
-  run("NotificationMorning", date, getNext(date));
-  schedule("notificationStart", date, 22, 0);
-}
-
-function notificationStart() : void
-{
-  // 22:00
-  const date = new Date();
-  run("NotificationStart", date, getNext(date));
-  schedule("notificationFinish", date, 25, 0);
-}
-
-function notificationFinish() : void
-{
-  // 25:00 (01:00)
-  const date = getYesterday();
-  run("NotificationFinish", date, getNext(date));
-  schedule("accumulationPosts", date, 36, 45);
-}
-
-function accumulationPosts() : void
-{
-  // 36:45 (12:45)
-  const date = getYesterday();
-  run("AccumulationPosts", date, getNext(date));
-  reset();
-}
-
-
-function run(workflowName : string, date : Date, next : Date) : void
-{
-  const headers = {
-      Authorization : `token ${getGithubToken()}`,
-      Accept : "application/vnd.github.v3+json"
-  };
-  const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows`, { method: "get", headers: headers });
-  const workflows = JSON.parse(workflowsResponse.getContentText());
-  const workflow = workflows.workflows.find(w => w.name == workflowName);
-
-  let res = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows/${workflow.id}/dispatches`,
-  {
-    method: "post",
-    headers: headers,
-    payload: JSON.stringify({ ref: "master", inputs: { date: fomatDate(date), next: fomatDate(next), general: "From GAS trigger." } })
-  });
-  console.log(res.getResponseCode());
-}
-
-function schedule(funcName : string, date : Date, h : number, m : number) : void
-{
-  const schedule = new Date(date.getFullYear(), date.getMonth(), date.getDate(), h, m);
-  ScriptApp.newTrigger(funcName).timeBased().at(schedule).create();
-  console.log(`Scheduled "${funcName}" at ${schedule.toLocaleString()}`);
-}
-
-function removeTrigger(funcName : string)
-{
-  const trigger = ScriptApp.getProjectTriggers().find(t => t.getHandlerFunction() == funcName);
-  ScriptApp.deleteTrigger(trigger);
-  console.log(`Removed "${funcName}"`);
-}
-
-function getYesterday() : Date
-{
-  let date = new Date();
-  date.setDate(date.getDate() - 1);
-  return date;
-}
-
-function getNext(date : Date) : Date
-{
-  let next = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1); // Tommorow
-  while((next.getDate() % 10) % 3 != 0) next.setDate(next.getDate() + 1); // TODO:
-  // while(next.getDate() % 10 != 3) next.setDate(next.getDate() + 1);
-  return next;
-}
-
-function fomatDate(date : Date) : string
-{
-  return `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
+	const dateStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
+	const dateEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes() + span);
+	if(dateStart <= ref && ref < dateEnd)
+	{
+		return 0;
+	}
+	else if (ref < dateStart)
+	{
+		return +1;
+	}
+	else if (dateEnd <= ref)
+	{
+		return -1;
+	}
 }
