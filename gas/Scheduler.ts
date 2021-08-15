@@ -10,7 +10,7 @@ function main(date : Date = new Date())
 	const previousEvent = events.reverse().find(i => i.getStartTime().getDate() < date.getDate());
 	const nextEvent = events.find(i => i.getEndTime().getDate() > date.getDate());
 	const toDayEvent = events.find(i => i.getStartTime().getDate() == date.getDate() || i.getEndTime().getDate() == date.getDate());
-	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) > 0  && approximately(i.getEndTime(), span, date) < 0);
+	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) >= 0  && approximately(i.getEndTime(), span, date) <= 0);
 	console.log(`previousEvent: ${previousEvent?.getTitle()} ${previousEvent?.getStartTime()}-${previousEvent?.getEndTime()}`);
 	console.log(`nextEvent: ${nextEvent?.getTitle()} ${nextEvent?.getStartTime()}-${nextEvent?.getEndTime()}`);
 	console.log(`toDayEvent: ${toDayEvent?.getTitle()} ${toDayEvent?.getStartTime()}-${toDayEvent?.getEndTime()}`);
@@ -60,7 +60,7 @@ function run(workflowName : string, actionDate : Date | GoogleAppsScript.Base.Da
 			command: workflowName,
 			actionDate : `${actionDate.getFullYear()}/${actionDate.getMonth()}/${actionDate.getDate()} ${actionDate.getHours()}:${actionDate.getMinutes()} +09:00`,
 			eventDate: `${eventDate.getFullYear()}/${eventDate.getMonth()}/${eventDate.getDate()} ${eventDate.getHours()}:${eventDate.getMinutes()} +09:00`,
-			nextDate: `${nextDate.getFullYear()}/${nextDate.getMonth()}/${nextDate.getDate()} ${nextDate.getHours()}:${nextDate.getMinutes()} +09:00`,
+			nextDate: `${nextDate?.getFullYear()}/${nextDate?.getMonth()}/${nextDate?.getDate()} ${nextDate?.getHours()}:${nextDate?.getMinutes()} +09:00`,
 			general: "From GAS trigger."
 		}})
 	});

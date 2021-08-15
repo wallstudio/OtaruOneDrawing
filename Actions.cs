@@ -30,7 +30,7 @@ namespace MakiOneDrawingBot
         readonly string accessTokenSecret;
         readonly string googleServiceAccountJwt;
         readonly DateTime eventDate;
-        readonly DateTime nextDate;
+        readonly DateTime? nextDate;
         readonly string general;
         readonly Tokens tokens;
 
@@ -48,7 +48,7 @@ namespace MakiOneDrawingBot
             this.googleServiceAccountJwt = Encoding.UTF8.GetString(Convert.FromBase64String(googleServiceAccountJwt));
             tokens = Tokens.Create(twitterApiKey, twitterApiSecret, accessToken, accessTokenSecret);
             eventDate = DateTime.Parse(date);
-            nextDate = DateTime.Parse(next);
+            nextDate = DateTime.TryParse(next, out var d) ? d : null;
             this.general = general;
         }
 
@@ -146,7 +146,7 @@ namespace MakiOneDrawingBot
 わんどろ終了ーー！！( ´ ∀`)ﾉA
 
 投稿いただいたイラストは明日のお昼にRTします！！
-次回は {nextDate:MM/dd\(ddd\)} の予定です、お楽しみに！！
+次回は {nextDate?.ToString(@"MM/dd\(ddd\)") ?? "未定"} の予定です、お楽しみに！！
 
 ▼イベントルール詳細
 {HELP_URL}
@@ -192,7 +192,7 @@ namespace MakiOneDrawingBot
 昨日のわんどろの投稿イラストをRTします！！！(ﾟ∇^*)
 {tweets.Length}作品の投稿をいただきました！
 
-次回は {nextDate:MM/dd\(ddd\)} の予定です、お楽しみに！！
+次回は {nextDate?.ToString(@"MM/dd\(ddd\)") ?? "未定"} の予定です、お楽しみに！！
 
 ▼イベントルール詳細
 {HELP_URL}
@@ -202,7 +202,7 @@ namespace MakiOneDrawingBot
 昨日のわんどろの投稿イラストをRT……
 って、誰も投稿してくれなかったみたい…(´；ω；｀)
 
-次回は {nextDate:MM/dd\(ddd\)} の予定です、よろしくおねがいします。
+次回は {nextDate?.ToString(@"MM/dd\(ddd\)") ?? "未定"} の予定です、よろしくおねがいします。
 
 ▼イベントルール詳細
 {HELP_URL}
