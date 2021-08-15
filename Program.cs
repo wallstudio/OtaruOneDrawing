@@ -29,9 +29,13 @@ namespace MakiOneDrawingBot
 
             if(DateTime.TryParse(args.SkipWhile(a => a != "--actionDate").Skip(1).FirstOrDefault(), out var actionDate))
             {
+                Console.WriteLine($"delay {actionDate} - {DateTime.Now}");
                 var delay = actionDate - DateTime.Now;
-                if(delay.TotalMinutes > 5) throw new Exception($"too long delay {delay} ({actionDate} - {DateTime.Now})");
-                Thread.Sleep(delay);
+                if(delay.TotalMinutes > 5) throw new Exception($"too long delay. {delay}");
+                if(delay.TotalSeconds > 0)
+                {
+                    Thread.Sleep(delay);
+                }
             }
 
             switch (command)
