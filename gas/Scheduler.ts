@@ -11,6 +11,10 @@ function main(date : Date = new Date())
 	const nextEvent = events.find(i => i.getEndTime().getDate() > date.getDate());
 	const toDayEvent = events.find(i => i.getStartTime().getDate() == date.getDate() || i.getEndTime().getDate() == date.getDate());
 	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) > 0  && approximately(i.getEndTime(), span, date) < 0);
+	console.log(`previousEvent: ${previousEvent?.getTitle()} ${previousEvent?.getStartTime()}-${previousEvent?.getEndTime()}`);
+	console.log(`nextEvent: ${nextEvent?.getTitle()} ${nextEvent?.getStartTime()}-${nextEvent?.getEndTime()}`);
+	console.log(`toDayEvent: ${toDayEvent?.getTitle()} ${toDayEvent?.getStartTime()}-${toDayEvent?.getEndTime()}`);
+	console.log(`runningEvent: ${runningEvent?.getTitle()} ${runningEvent?.getStartTime()}-${runningEvent?.getEndTime()}`);
 
 	const morningTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 9, 30);
 	const accumulateTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 45);
