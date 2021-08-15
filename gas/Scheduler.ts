@@ -25,20 +25,24 @@ function main(date : Date = new Date())
 	{
 		run("NotificationMorning", morningTime, toDayEvent.getStartTime(), nextEvent?.getStartTime());
 	}
-	if(runningEvent != null
+	else if(runningEvent != null
 		&& 0 == approximately(runningEvent.getStartTime(), span, date))
 	{
 		run("NotificationStart", runningEvent.getStartTime(), runningEvent.getStartTime(), nextEvent?.getStartTime());
 	}
-	if(runningEvent != null
+	else if(runningEvent != null
 		&& 0 == approximately(runningEvent.getEndTime(), span, date))
 	{
 		run("NotificationFinish", runningEvent.getEndTime(), runningEvent.getStartTime(), nextEvent?.getStartTime());
 	}
-	if(previousEvent?.getStartTime()?.getDate() == date.getDate() - 1
+	else if(previousEvent?.getStartTime()?.getDate() == date.getDate() - 1
 		&& 0 == approximately(accumulateTime, span, date))
 	{
 		run("AccumulationPosts", accumulateTime, previousEvent.getStartTime(), nextEvent?.getStartTime());
+	}
+	else
+	{
+		console.log("no task");
 	}
 }
 
