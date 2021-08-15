@@ -3,7 +3,7 @@ function main(date : Date = new Date())
 {
 	const span = 5;
 	const calender = CalendarApp.getCalendarById("22326mbg1cbd88bi5s7e9cklbg@group.calendar.google.com");
-	const searchStart = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate() - 1);
+	const searchStart = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
 	const searchEnd = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
 	const events = calender.getEvents(searchStart, searchEnd);
 
@@ -58,9 +58,9 @@ function run(workflowName : string, actionDate : Date | GoogleAppsScript.Base.Da
 		payload: JSON.stringify({ ref: "master", inputs:
 		{
 			command: workflowName,
-			actionDate : `${actionDate.getFullYear()}/${actionDate.getMonth()}/${actionDate.getDate()} ${actionDate.getHours()}:${actionDate.getMinutes()} +09:00`,
-			eventDate: `${eventDate.getFullYear()}/${eventDate.getMonth()}/${eventDate.getDate()} ${eventDate.getHours()}:${eventDate.getMinutes()} +09:00`,
-			nextDate: `${nextDate?.getFullYear()}/${nextDate?.getMonth()}/${nextDate?.getDate()} ${nextDate?.getHours()}:${nextDate?.getMinutes()} +09:00`,
+			actionDate : `${actionDate.getFullYear()}/${actionDate.getMonth() + 1}/${actionDate.getDate()} ${actionDate.getHours()}:${actionDate.getMinutes()} +09:00`,
+			eventDate: `${eventDate.getFullYear()}/${eventDate.getMonth() + 1}/${eventDate.getDate()} ${eventDate.getHours()}:${eventDate.getMinutes()} +09:00`,
+			nextDate: `${nextDate?.getFullYear()}/${nextDate?.getMonth() + 1}/${nextDate?.getDate()} ${nextDate?.getHours()}:${nextDate?.getMinutes()} +09:00`,
 			general: "From GAS trigger."
 		}})
 	});
