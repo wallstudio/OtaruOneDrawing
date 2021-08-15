@@ -1,4 +1,6 @@
 
+function onTrigger() { main(new Date()); }
+
 function main(date : Date = new Date())
 {
 	const span = 5;
