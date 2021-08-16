@@ -18,8 +18,8 @@ function main(date : Date = new Date())
 	console.log(`toDayEvent: ${toDayEvent?.getTitle()} ${toDayEvent?.getStartTime()}-${toDayEvent?.getEndTime()}`);
 	console.log(`runningEvent: ${runningEvent?.getTitle()} ${runningEvent?.getStartTime()}-${runningEvent?.getEndTime()}`);
 
-	const morningTime = new Date(toDayEvent.getStartTime().getFullYear(), toDayEvent.getStartTime().getMonth(), toDayEvent.getStartTime().getDate(), 9, 30);
-	const accumulateTime = new Date(previousEvent.getStartTime().getFullYear(), previousEvent.getStartTime().getMonth(), previousEvent.getStartTime().getDate(), 36, 45);
+	const morningTime = new Date(toDayEvent?.getStartTime()?.getFullYear(), toDayEvent?.getStartTime()?.getMonth(), toDayEvent?.getStartTime()?.getDate(), 9, 30);
+	const accumulateTime = new Date(previousEvent?.getStartTime()?.getFullYear(), previousEvent?.getStartTime()?.getMonth(), previousEvent?.getStartTime()?.getDate(), 36, 45);
 	if(toDayEvent != null
 		&& 0 == approximately(morningTime, span, date))
 	{
