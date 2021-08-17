@@ -51,4 +51,18 @@ jobs:
         --eventDate "${{ github.event.inputs.eventDate }}"
         --nextDate "${{ github.event.inputs.nextDate }}"
         --general "${{ github.event.inputs.general }}"
+    - name: Git
+      run: |
+        if test -z `git diff HEAD`; then
+          echo "skip no changed"
+        else
+          git status
+          git diff
+          git add -A
+          git config --local user.email "example.com"
+          git config --local user.name "bot"
+          git commit -m "auto commit"
+          git pull --no-rebase
+          git push
+        fi
         
