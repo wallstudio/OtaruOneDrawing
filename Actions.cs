@@ -14,6 +14,7 @@ using System.Text;
 using Color = SixLabors.ImageSharp.Color;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using YamlDotNet.Serialization;
 
 namespace MakiOneDrawingBot
 {
@@ -25,6 +26,8 @@ namespace MakiOneDrawingBot
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         readonly string HELP_URL = "https://wallstudio.github.io/MakiOneDrawingBot/";
         readonly string HELP_FILE = "docs/index.md";
+        readonly string HELP_CONFIG_FILE = "docs/_config.yml";
+        readonly Serializer SERIALIZER = new();
         readonly string googleServiceAccountJwt;
         readonly DateTime eventDate;
         readonly DateTime? nextDate;
@@ -353,6 +356,12 @@ namespace MakiOneDrawingBot
 - その他ご不明な点等がありましたら、リプライ、DMなどでお問い合わせください。
 
             ", Encoding.UTF8);
+        
+            File.WriteAllText(HELP_CONFIG_FILE, SERIALIZER.Serialize(new
+            {
+                theme = "jekyll-theme-slate",
+                title = HASH_TAG,
+            }));
         }
 
         string LinkedMedia(string screenName, string statusId, string mediaUrl) => $"[![]({mediaUrl}:thumb)](https://twitter.com/{screenName}/status/{statusId})";
