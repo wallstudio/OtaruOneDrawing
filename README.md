@@ -1,51 +1,8 @@
-﻿
-# ツルマキマキ
+# マキマキワンドロ運営
 
-[![NotificationMorning](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml)
-[![NotificationStart](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_start.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_start.yml)
-[![NotificationFinish](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_finish.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_finish.yml)
-[![AccumulationPosts](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/accumulation_posts.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/accumulation_posts.yml)
+[![Main](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/main.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/main.yml)
 
-[基本ルール](#基本ルール)
-
-## 最近の作品
-
-| 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ |
-| :---: | :---: | :---: | :---: | :---: |
-| [![](:thumb)](https://twitter.com) | [![](:thumb)](https://twitter.com) | [![](:thumb)](https://twitter.com) | [![](:thumb)](https://twitter.com) | [![](:thumb)](https://twitter.com) |
-| [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) |
-
-## ランキング
-
-### 🏆Best of 作品数🏆
-
-沢山のマキマキイラスト作品を描き上げた方々です！
-
-| 🥇 | 🥈 | 🥉 |
-| :---: | :---: | :---: |
-| [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.jpeg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.png)](https://twitter.com/makimaki_draw) |
-| [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) |
-| 1 作品 | 1 作品 | 1 作品 | 1 作品 | 1 作品 |
-
-### 🏆Best of 参加回数🏆
-
-イベントに沢山参加してくださった方々です！
-
-| 🥇 | 🥈 | 🥉 |
-| :---: | :---: | :---: |
-| [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.jpeg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.png)](https://twitter.com/makimaki_draw) |
-| [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) |
-| 1 回 | 1 回 | 1 回 | 1 回 | 1 回 |
-
-### 🏆Best of 継続数🏆
-
-継続的に参加してくださっている方々です！
-
-| 🥇 | 🥈 | 🥉 |
-| :---: | :---: | :---: |
-| [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_bigger.jpg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.jpeg)](https://twitter.com/makimaki_draw) | [![@makimaki_draw](https://pbs.twimg.com/profile_images/1423760195168083970/A7BvLbpY_normal.png)](https://twitter.com/makimaki_draw) |
-| [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) | [@makimaki_draw](https://twitter.com/makimaki_draw) |
-| 1 回連続 | 1 回連続 | 1 回連続 | 1 回連続 | 1 回連続 |
+[サマリーページ](https://wallstudio.github.io/MakiOneDrawingBot/)
 
 ## 基本ルール
 
