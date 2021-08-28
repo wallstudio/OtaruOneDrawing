@@ -1,13 +1,25 @@
+const CALENDER_ID = "22326mbg1cbd88bi5s7e9cklbg@group.calendar.google.com";
+const EVENT_NAME = "弦巻マキ深夜の真剣お絵描き60分勝負";
 
-function onTrigger() { main(new Date()); }
-
-function main(date : Date = new Date())
+function onTrigger(arg: GoogleAppsScript.Events.AppsScriptEvent)
 {
+	if(arg == undefined)
+	{
+		console.log("need launch from trigger");
+		return;
+	}
+	else
+	{
+		console.log(`triggered ${arg.triggerUid}`);
+	}
+
+	const date = new Date()
 	const span = 5;
-	const calender = CalendarApp.getCalendarById("22326mbg1cbd88bi5s7e9cklbg@group.calendar.google.com");
 	const searchStart = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
 	const searchEnd = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
-	const events = calender.getEvents(searchStart, searchEnd);
+	const events = CalendarApp.getCalendarById(CALENDER_ID)
+		.getEvents(searchStart, searchEnd)
+		.filter(ev => ev.getTitle() == EVENT_NAME);
 
 	const previousEvent = events.reverse().find(i => i.getStartTime().getDate() < date.getDate());
 	const nextEvent = events.find(i => i.getEndTime().getDate() > date.getDate());
@@ -88,5 +100,23 @@ function approximately(ref : Date | GoogleAppsScript.Base.Date, span : number, d
 	else if (dateEnd <= ref)
 	{
 		return -1;
+	}
+}
+
+function makeSchedules()
+{
+	const description = "詳細はこちら！\nhttps://wallstudio.github.io/MakiOneDrawingBot/";
+	const date = new Date();
+	for (
+		let d = date;
+		d.getTime() < new Date(date.getFullYear(), date.getMonth() + 2).getTime(); // とりあえず来月末まで
+		d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1))
+	{
+		if(d.getDate() % 10 != 3) continue;
+
+		const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 22);
+		const end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 25);
+		CalendarApp.getCalendarById(CALENDER_ID).createEvent(EVENT_NAME, start, end, { "description" : description});
+		console.log(`Scheduled at ${start.toLocaleString()}`);
 	}
 }
