@@ -4,6 +4,8 @@
 
 [サマリーページ](https://wallstudio.github.io/MakiOneDrawingBot/)
 
+不具合報告や要望につきましては、[issues](https://github.com/wallstudio/MakiOneDrawingBot/issues) または [@yukawallstudio](https://twitter.com/yukawallstudio/) までお寄せください。
+
 ## 基本ルール
 
 1. 毎月3日、13日、23日に開催されます。
