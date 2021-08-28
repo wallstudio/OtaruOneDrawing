@@ -23,12 +23,8 @@ namespace MakiOneDrawingBot
         readonly string HASH_TAG = "#ツルマキマキ";
         // readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
-        readonly string HELP_URL = "https://github.com/wallstudio/MakiOneDrawingBot/blob/master/README.md";
-        readonly string twitterApiKey;
-        readonly string twitterApiSecret;
-        readonly string bearerToken;
-        readonly string accessToken;
-        readonly string accessTokenSecret;
+        readonly string HELP_URL = "https://wallstudio.github.io/MakiOneDrawingBot/";
+        readonly string HELP_FILE = "docs/index.md";
         readonly string googleServiceAccountJwt;
         readonly DateTime eventDate;
         readonly DateTime? nextDate;
@@ -41,11 +37,6 @@ namespace MakiOneDrawingBot
 
         public Actions(string twitterApiKey, string twitterApiSecret, string bearerToken, string accessToken, string accessTokenSecret, string googleServiceAccountJwt, string date, string next, string general)
         {
-            this.twitterApiKey = twitterApiKey;
-            this.twitterApiSecret = twitterApiSecret;
-            this.bearerToken = bearerToken;
-            this.accessToken = accessToken;
-            this.accessTokenSecret = accessTokenSecret;
             this.googleServiceAccountJwt = Encoding.UTF8.GetString(Convert.FromBase64String(googleServiceAccountJwt));
             tokens = Tokens.Create(twitterApiKey, twitterApiSecret, accessToken, accessTokenSecret);
             eventDate = DateTime.Parse(date);
@@ -293,7 +284,7 @@ namespace MakiOneDrawingBot
             schedule["ranking_continue"] = string.Join(",", continueRanking.Select(p => p.id));
             
 
-            File.WriteAllText("README.md", @$"
+            File.WriteAllText(HELP_FILE, @$"
 # {HASH_TAG.TrimStart("#".ToCharArray())}
 
 [![NotificationMorning](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/notification_morning.yml)
