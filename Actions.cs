@@ -13,6 +13,7 @@ using Google.Apis.Sheets.v4;
 using System.Text;
 using Color = SixLabors.ImageSharp.Color;
 using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MakiOneDrawingBot
 {
@@ -171,8 +172,7 @@ namespace MakiOneDrawingBot
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15) - TimeSpan.FromDays(1); // TODO:
-            // var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15);
+            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15); // 15分の遊び
             var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(15);
             var tweets = EnumerateSearchTweets(
                 q: $"{HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
@@ -222,12 +222,15 @@ namespace MakiOneDrawingBot
                 // TODO:
                 // tokens.Favorites.Create(tweet.Id);
                 // tokens.Statuses.Retweet(tweet.Id);
+                Console.WriteLine($"RT+Fav {tweet.Id,20} {tweet.User.ScreenName,-10} {tweet.Text}");
             }
-            var followees = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
-            foreach (var id in tweets.Select(s => s.User.Id).OfType<long>().Distinct().Where(id => !followees.Contains(id)))
+            var followered = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
+            var noFollowered = tweets.Select(s => s.User).Distinct(UserComparer.Default).Where(u => !followered.Contains(u.Id ?? 0)).ToArray();
+            foreach (var user in noFollowered)
             {
                 // TODO:
                 // tokens.Friendships.Create(user_id: id, follow: true);
+                Console.WriteLine($"Follow {user.ScreenName}");
             }
 
             // Aggregate
@@ -309,7 +312,7 @@ namespace MakiOneDrawingBot
 
 ## ランキング
 
-### 🏆Best of 作品数🏆
+### 🏆Best 作品数🏆
 
 沢山のマキマキイラスト作品を描き上げた方々です！
 
@@ -319,7 +322,7 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(postRanking.ElementAtOrDefault(i).user)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{postRanking.ElementAtOrDefault(i).count} 作品"))} |
 
-### 🏆Best of 参加回数🏆
+### 🏆Best 参加回数🏆
 
 イベントに沢山参加してくださった方々です！
 
@@ -329,7 +332,7 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(entryRanking.ElementAtOrDefault(i).user)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{entryRanking.ElementAtOrDefault(i).count} 回"))} |
 
-### 🏆Best of 継続数🏆
+### 🏆Best 継続数🏆
 
 継続的に参加してくださっている方々です！
 
@@ -398,5 +401,12 @@ namespace MakiOneDrawingBot
             image.SaveAsPng(buffer);
             return buffer.ToArray();
         }
+    }
+
+    class UserComparer : IEqualityComparer<User>
+    {
+        public static readonly IEqualityComparer<User> Default = new UserComparer();
+        public bool Equals(User x, User y) => x.Id == y.Id;
+        public int GetHashCode(User obj) => obj.Id?.GetHashCode() ?? 0;
     }
 }
