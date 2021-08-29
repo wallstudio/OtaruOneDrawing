@@ -62,8 +62,8 @@ namespace MakiOneDrawingBot
                     actions.NotificationFinish();
                     actions.AccumulationPosts();
                     break;
-                case nameof(Actions.CreateTextImage):
-                    File.WriteAllBytes("o.png", Actions.CreateTextImage("マキマキ⚡\nかわいいやったー！😇"));
+                case nameof(Views.GenerateTextImage):
+                    File.WriteAllBytes("o.png", Views.GenerateTextImage("マキマキ⚡\nかわいいやったー！😇"));
                     break;
                 default:
                     throw new ArgumentException($"--command={command}");
