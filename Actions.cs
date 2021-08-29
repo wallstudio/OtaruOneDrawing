@@ -40,21 +40,12 @@ namespace MakiOneDrawingBot
         public void NotificationMorning()
         {
             using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
-
-            // Create new schedule
-            var schedule = tables["schedule"].Add(ScheduleId);
-            var unusedTheme = tables["theme"]
-                .Where(thm => !tables["schedule"].Any(ev => ev["id_theme"] == thm["id"]));
-            var theme = unusedTheme
-                .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == eventDate.Date) // 別の日を除外
-                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == eventDate.Date)
-                .First();
-            schedule["id_theme"] = theme["id"];
-            schedule["date"] = eventDate.ToString("yyyy/MM/dd");
+            var schedule = CreateOrGetSchedule(tables);
 
             // Post tweet
-            var theme1 = tables["theme"][schedule["id_theme"]]["theme1"];
-            var theme2 = tables["theme"][schedule["id_theme"]]["theme2"];
+            var themeId = schedule["id_theme"];
+            var theme1 = tables["theme"][themeId]["theme1"];
+            var theme2 = tables["theme"][themeId]["theme2"];
             var uploadResult = tokens.Media.Upload(Views.GenerateTextImage($"{theme1}\n\n{theme2}"));
             var morning = tokens.Statuses.Update(
                 status: Views.PredictTweet(theme1, theme2),
@@ -73,16 +64,17 @@ namespace MakiOneDrawingBot
         public void NotificationStart()
         {
             using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
-            var schedule = tables["schedule"][ScheduleId];
+            var schedule = CreateOrGetSchedule(tables);
 
             // Post tweet
-            var theme1 = tables["theme"][schedule["id_theme"]]["theme1"];
-            var theme2 = tables["theme"][schedule["id_theme"]]["theme2"];
+            var themeId = schedule["id_theme"];
+            var theme1 = tables["theme"][themeId]["theme1"];
+            var theme2 = tables["theme"][themeId]["theme2"];
             var uploadResult = tokens.Media.Upload(Views.GenerateTextImage($"{theme1}\n\n{theme2}"));
             var start = tokens.Statuses.Update(
                 status: Views.StartTweet(theme1, theme2),
                 media_ids: new[] { uploadResult.MediaId },
-                in_reply_to_status_id: long.Parse(schedule["id_morning_status"]),
+                in_reply_to_status_id: long.TryParse(schedule["id_morning_status"], out var i) ? i : null,
                 auto_populate_reply_metadata: true);
 
             // Record
@@ -97,12 +89,12 @@ namespace MakiOneDrawingBot
         public void NotificationFinish()
         {
             using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
-            var schedule = tables["schedule"][ScheduleId];
+            var schedule = CreateOrGetSchedule(tables);
 
             // Post tweet
             var finish = tokens.Statuses.Update(
                 status: Views.FinishTweet(nextDate),
-                in_reply_to_status_id: long.Parse(schedule["id_start_status"]),
+                in_reply_to_status_id: long.TryParse(schedule["id_start_status"], out var i) ? i : null,
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
 
@@ -118,7 +110,7 @@ namespace MakiOneDrawingBot
         public void AccumulationPosts()
         {
             using var tables = DB.Get(googleServiceAccountJwt, DB_SHEET_ID);
-            var schedule = tables["schedule"][ScheduleId];
+            var schedule = CreateOrGetSchedule(tables);
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
@@ -137,7 +129,7 @@ namespace MakiOneDrawingBot
             // Post tweet
             var preRetweet = tokens.Statuses.Update(
                 status: Views.ResultTweet(tweets, nextDate),
-                in_reply_to_status_id: long.Parse(schedule["id_finish_status"]),
+                in_reply_to_status_id: long.TryParse(schedule["id_finish_status"], out var i) ? i : null,
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
 
@@ -215,6 +207,26 @@ namespace MakiOneDrawingBot
                 theme = "jekyll-theme-slate",
                 title = Views.HASH_TAG,
             }));
+        }
+
+        Entry CreateOrGetSchedule(DB tables)
+        {
+            if(tables["schedule"].TryGet(ScheduleId, out var schedule))
+            {
+                return schedule;
+            }
+
+            schedule = tables["schedule"].Add(ScheduleId);
+            var unusedTheme = tables["theme"]
+                .Where(thm => !tables["schedule"].Any(ev => ev["id_theme"] == thm["id"]));
+            var theme = unusedTheme
+                .Where(thm => !DateTime.TryParse(thm["date"], out var d) || d == eventDate.Date) // 別の日を除外
+                .OrderByDescending(thm => DateTime.TryParse(thm["date"], out var d) && d == eventDate.Date)
+                .First();
+            schedule["id_theme"] = theme["id"];
+            schedule["date"] = eventDate.ToString("yyyy/MM/dd");
+            Console.WriteLine($"created new schedule {ScheduleId}");
+            return schedule;
         }
 
         IEnumerable<Status> EnumerateSearchTweets(string q, string geocode = null, string lang = null, string locale = null, string result_type = null, int? count = null, string until = null, long? since_id = null, long? max_id = null, bool? include_entities = null, bool? include_ext_alt_text = null, TweetMode? tweet_mode = null)

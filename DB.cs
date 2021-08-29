@@ -61,6 +61,8 @@ namespace MakiOneDrawingBot
 
             Keys = Enumerable.Range(0, Size.column).Select(i => this[0, i]).ToArray();
         }
+        
+        public bool TryGet(string id, out Entry entry) => null != (entry = this.FirstOrDefault(e => e["id"] == id));
 
         public void Dispose()
         {
