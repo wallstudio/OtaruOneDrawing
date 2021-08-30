@@ -13,7 +13,7 @@ function onTrigger(arg: GoogleAppsScript.Events.AppsScriptEvent)
 		console.log(`triggered ${arg.triggerUid}`);
 	}
 
-	const date = new Date()
+	const date = new Date();
 	const span = 5;
 	const searchStart = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
 	const searchEnd = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
@@ -21,9 +21,9 @@ function onTrigger(arg: GoogleAppsScript.Events.AppsScriptEvent)
 		.getEvents(searchStart, searchEnd)
 		.filter(ev => ev.getTitle() == EVENT_NAME);
 
-	const previousEvent = events.reverse().find(i => i.getStartTime().getDate() < date.getDate());
-	const nextEvent = events.find(i => i.getEndTime().getDate() > date.getDate());
-	const toDayEvent = events.find(i => i.getStartTime().getDate() == date.getDate() || i.getEndTime().getDate() == date.getDate());
+	const previousEvent = events.reverse().find(i => toDate(i.getStartTime()) < toDate(date));
+	const nextEvent = events.find(i => toDate(i.getEndTime()) > toDate(date));
+	const toDayEvent = events.find(i => toDate(i.getStartTime()) == toDate(date) || toDate(i.getEndTime()) == toDate(date));
 	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) >= 0  && approximately(i.getEndTime(), span, date) <= 0);
 	console.log(`previousEvent: ${previousEvent?.getTitle()} ${previousEvent?.getStartTime()}-${previousEvent?.getEndTime()}`);
 	console.log(`nextEvent: ${nextEvent?.getTitle()} ${nextEvent?.getStartTime()}-${nextEvent?.getEndTime()}`);
@@ -119,4 +119,9 @@ function makeSchedules()
 		CalendarApp.getCalendarById(CALENDER_ID).createEvent(EVENT_NAME, start, end, { "description" : description});
 		console.log(`Scheduled at ${start.toLocaleString()}`);
 	}
+}
+
+function toDate(date : Date | GoogleAppsScript.Base.Date) : Date
+{
+	return new Date(date.toLocaleDateString());
 }
