@@ -169,7 +169,7 @@ namespace MakiOneDrawingBot
                 post["url_user_icon"] = tweet.User.ProfileImageUrlHttps;
                 post["url_media"] = tweet.Entities?.Media?.FirstOrDefault()?.MediaUrlHttps;
             }
-            var userInfoTable = tokens.Users.Lookup(posts.Select(p => long.Parse(p["id_user"])).Distinct());
+            var userInfoTable = posts.Any() ? tokens.Users.Lookup(posts.Select(p => long.Parse(p["id_user"])).Distinct()) : Enumerable.Empty<User>();
             var recently = posts
                 .OrderByDescending(pst => DateTime.Parse(pst["ts_utc_post"]))
                 .Select(p => new Recentry(userInfoTable.First(u => u.Id == long.Parse(p["id_user"])), p))
