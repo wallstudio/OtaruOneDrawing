@@ -114,8 +114,8 @@ namespace MakiOneDrawingBot
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(15); // 15分の遊び
-            var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(15);
+            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(60); // 60分の遊び
+            var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(60);
             var tweets = EnumerateSearchTweets(
                 q: $"{Views.HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}", // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
                 result_type: "recent",
