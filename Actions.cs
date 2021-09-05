@@ -114,9 +114,10 @@ namespace MakiOneDrawingBot
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule["ts_utc_start_status"]) - TimeSpan.FromMinutes(60); // 60分の遊び
-            var until = DateTime.Parse(schedule["ts_utc_finish_status"]) + TimeSpan.FromMinutes(60);
-            var query = schedule["query"] = $"{Views.HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since:yyy-MM-dd} until:{until:yyy-MM-dd}"; // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
+            var since = DateTime.Parse(schedule["ts_start_status"]) - TimeSpan.FromMinutes(60); // 60分の遊び
+            var until = DateTime.Parse(schedule["ts_finish_status"]) + TimeSpan.FromMinutes(60);
+            var format = @"yyy-MM-dd_HH\:mm\:ss_JST";
+            var query = schedule["query"] = $"{Views.HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since.ToString(format)} until:{until.ToString(format)}"; // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
             var tweets = EnumerateSearchTweets(
                 q: query, 
                 result_type: "recent",
@@ -124,7 +125,7 @@ namespace MakiOneDrawingBot
                 count: 100,
                 include_entities: true,
                 tweet_mode: TweetMode.Extended)
-                .Where(twt => since <= twt.CreatedAt && twt.CreatedAt <= until)
+                // .Where(twt => since <= twt.CreatedAt && twt.CreatedAt <= until)
                 .ToArray();
 
             // Post tweet
