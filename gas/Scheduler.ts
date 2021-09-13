@@ -21,9 +21,9 @@ function onTrigger(arg: GoogleAppsScript.Events.AppsScriptEvent)
 		.getEvents(searchStart, searchEnd)
 		.filter(ev => ev.getTitle() == EVENT_NAME);
 
-	const previousEvent = events.reverse().find(i => toDate(i.getStartTime()) < toDate(date));
-	const nextEvent = events.find(i => toDate(i.getEndTime()) > toDate(date));
-	const toDayEvent = events.find(i => toDate(i.getStartTime()) == toDate(date) || toDate(i.getEndTime()) == toDate(date));
+	const previousEvent = events.reverse().find(i => toDateTick(i.getStartTime()) < toDateTick(date));
+	const nextEvent = events.find(i => toDateTick(i.getEndTime()) > toDateTick(date));
+	const toDayEvent = events.find(i => toDateTick(i.getStartTime()) == toDateTick(date) || toDateTick(i.getEndTime()) == toDateTick(date));
 	const runningEvent = events.find(i => approximately(i.getStartTime(), span, date) >= 0  && approximately(i.getEndTime(), span, date) <= 0);
 	console.log(`previousEvent: ${previousEvent?.getTitle()} ${previousEvent?.getStartTime()}-${previousEvent?.getEndTime()}`);
 	console.log(`nextEvent: ${nextEvent?.getTitle()} ${nextEvent?.getStartTime()}-${nextEvent?.getEndTime()}`);
@@ -124,4 +124,9 @@ function makeSchedules()
 function toDate(date : Date | GoogleAppsScript.Base.Date) : Date
 {
 	return new Date(date.toLocaleDateString());
+}
+
+function toDateTick(date : Date | GoogleAppsScript.Base.Date) : number
+{
+	return toDate(data).getTime();
 }
