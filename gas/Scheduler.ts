@@ -128,5 +128,5 @@ function toDate(date : Date | GoogleAppsScript.Base.Date) : Date
 
 function toDateTick(date : Date | GoogleAppsScript.Base.Date) : number
 {
-	return toDate(data).getTime();
+	return toDate(date).getTime();
 }
