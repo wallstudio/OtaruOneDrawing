@@ -6,8 +6,8 @@
 
 | 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ |
 | :---: | :---: | :---: | :---: | :---: |
-| [![](https://pbs.twimg.com/ext_tw_video_thumb/1434906991789441027/pu/img/uJzsGM-QD6tQxTwf.jpg:thumb)](https://twitter.com/CmADqkrAWf0Xmx5/status/1434907578769702914) | [![](https://pbs.twimg.com/media/E-mqX5aUcAY7PVH.jpg:thumb)](https://twitter.com/CmADqkrAWf0Xmx5/status/1434874072295374848) | [![](https://pbs.twimg.com/media/E-mrercUUAY1h4U.jpg:thumb)](https://twitter.com/stegoma016/status/1434866501895352325) | [![](:thumb)](https://twitter.com//status/) | [![](:thumb)](https://twitter.com//status/) |
-| [@CmADqkrAWf0Xmx5](https://twitter.com/CmADqkrAWf0Xmx5) | [@CmADqkrAWf0Xmx5](https://twitter.com/CmADqkrAWf0Xmx5) | [@stegoma016](https://twitter.com/stegoma016) | [@](https://twitter.com/) | [@](https://twitter.com/) |
+| [![](:thumb)](https://twitter.com//status/) | [![](:thumb)](https://twitter.com//status/) | [![](:thumb)](https://twitter.com//status/) | [![](:thumb)](https://twitter.com//status/) | [![](:thumb)](https://twitter.com//status/) |
+| [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) |
 
 ## ランキング
 
@@ -17,9 +17,9 @@
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| [![@stegoma016](https://pbs.twimg.com/profile_images/1423616047328890882/w2RfiN4H_bigger.jpg)](https://twitter.com/stegoma016) | [![@CmADqkrAWf0Xmx5](https://pbs.twimg.com/profile_images/1402638900267421706/RgiV28I3_bigger.jpg)](https://twitter.com/CmADqkrAWf0Xmx5) | [![@]()](https://twitter.com/) |
-| [@stegoma016](https://twitter.com/stegoma016) | [@CmADqkrAWf0Xmx5](https://twitter.com/CmADqkrAWf0Xmx5) | [@](https://twitter.com/) |
-| 1 作品 | 2 作品 |  作品 |
+| [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) |
+| [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) |
+|  作品 |  作品 |  作品 |
 
 ### 🏆Best 参加回数🏆
 
@@ -27,9 +27,9 @@
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| [![@CmADqkrAWf0Xmx5](https://pbs.twimg.com/profile_images/1402638900267421706/RgiV28I3_bigger.jpg)](https://twitter.com/CmADqkrAWf0Xmx5) | [![@stegoma016](https://pbs.twimg.com/profile_images/1423616047328890882/w2RfiN4H_bigger.jpg)](https://twitter.com/stegoma016) | [![@]()](https://twitter.com/) |
-| [@CmADqkrAWf0Xmx5](https://twitter.com/CmADqkrAWf0Xmx5) | [@stegoma016](https://twitter.com/stegoma016) | [@](https://twitter.com/) |
-| 1 回 | 1 回 |  回 |
+| [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) |
+| [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) |
+|  回 |  回 |  回 |
 
 ### 🏆Best 継続数🏆
 
@@ -37,9 +37,9 @@
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| [![@CmADqkrAWf0Xmx5](https://pbs.twimg.com/profile_images/1402638900267421706/RgiV28I3_bigger.jpg)](https://twitter.com/CmADqkrAWf0Xmx5) | [![@stegoma016](https://pbs.twimg.com/profile_images/1423616047328890882/w2RfiN4H_bigger.jpg)](https://twitter.com/stegoma016) | [![@]()](https://twitter.com/) |
-| [@CmADqkrAWf0Xmx5](https://twitter.com/CmADqkrAWf0Xmx5) | [@stegoma016](https://twitter.com/stegoma016) | [@](https://twitter.com/) |
-| 1 回連続 | 1 回連続 |  回連続 |
+| [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) | [![@]()](https://twitter.com/) |
+| [@](https://twitter.com/) | [@](https://twitter.com/) | [@](https://twitter.com/) |
+|  回連続 |  回連続 |  回連続 |
 
 ## 基本ルール
 
