@@ -171,7 +171,16 @@ namespace MakiOneDrawingBot
                 post["url_user_icon"] = tweet.User.ProfileImageUrlHttps;
                 post["url_media"] = tweet.Entities?.Media?.FirstOrDefault()?.MediaUrlHttps;
             }
-            var userInfoTable = posts.Any() ? tokens.Users.Lookup(posts.Select(p => long.Parse(p["id_user"])).Distinct()) : Enumerable.Empty<User>();
+            Console.WriteLine($"Total post: {posts.Count()} Total Users: {posts.Select(p => long.Parse(p["id_user"])).Distinct().Count()}");
+            var userInfoTable = posts.Any()
+                // https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/follow-search-get-users/api-reference/get-users-lookup
+                ? posts.Select(p => long.Parse(p["id_user"]))
+                    .Distinct()
+                    .Select((id, i)=> (id, i))
+                    .GroupBy(t => t.i / 95, t => t.id)
+                    .SelectMany(ids => tokens.Users.Lookup(ids))
+                    .ToArray()
+                : Enumerable.Empty<User>();
             var recently = posts
                 .OrderByDescending(pst => DateTime.Parse(pst["ts_utc_post"]))
                 .Select(p => new Recentry(userInfoTable.First(u => u.Id == long.Parse(p["id_user"])), p))
