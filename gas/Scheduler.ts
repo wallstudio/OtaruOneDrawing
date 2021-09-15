@@ -65,11 +65,11 @@ function run(workflowName : string, actionDate : Date | GoogleAppsScript.Base.Da
 			Authorization : `token ${getGithubToken()}`,
 			Accept : "application/vnd.github.v3+json"
 	};
-	const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows`, { method: "get", headers: headers });
+	const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawing/actions/workflows`, { method: "get", headers: headers });
 	const workflows : any[] = JSON.parse(workflowsResponse.getContentText()).workflows;
 	const workflow = workflows.find(w => w.name == "Main");
 
-	let res = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawingBot/actions/workflows/${workflow.id}/dispatches`,
+	let res = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawing/actions/workflows/${workflow.id}/dispatches`,
 	{
 		method: "post",
 		headers: headers,
@@ -105,7 +105,7 @@ function approximately(ref : Date | GoogleAppsScript.Base.Date, span : number, d
 
 function makeSchedules()
 {
-	const description = "詳細はこちら！\nhttps://wallstudio.github.io/MakiOneDrawingBot/";
+	const description = "詳細はこちら！\nhttps://wallstudio.github.io/MakiOneDrawing/";
 	const date = new Date();
 	for (
 		let d = date;

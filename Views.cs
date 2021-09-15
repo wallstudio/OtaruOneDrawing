@@ -17,7 +17,7 @@ namespace MakiOneDrawingBot
         public static readonly string HASH_TAG = "#ツルマキマキ";
         // static readonly string HASH_TAG = "#者犬葉当夜位乃思遣於介火器99分聖父";
         // static readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
-        static string HELP_URL => $"https://wallstudio.github.io/MakiOneDrawingBot?v={DateTime.Now.Ticks:x}";
+        static string HELP_URL => $"https://wallstudio.github.io/MakiOneDrawing?v={DateTime.Now.Ticks:x}";
         
         public static string PredictTweet(string theme1, string theme2)
         {

@@ -1,10 +1,10 @@
 # マキマキワンドロ運営
 
-[![Main](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/main.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawingBot/actions/workflows/main.yml)
+[![Main](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/main.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/main.yml)
 
-[サマリーページ](https://wallstudio.github.io/MakiOneDrawingBot/)
+[サマリーページ](https://wallstudio.github.io/MakiOneDrawing/)
 
-不具合報告や要望につきましては、[issues](https://github.com/wallstudio/MakiOneDrawingBot/issues) または [@yukawallstudio](https://twitter.com/yukawallstudio/) までお寄せください。
+不具合報告や要望につきましては、[issues](https://github.com/wallstudio/MakiOneDrawing/issues) または [@yukawallstudio](https://twitter.com/yukawallstudio/) までお寄せください。
 
 ## 基本ルール
 

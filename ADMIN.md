@@ -1,10 +1,10 @@
 ```
 GASTrigger
 ↓
-GAS(Cron MakiOneDrawingBot) → GASTrigger(schedule next)
+GAS(Cron MakiOneDrawing) → GASTrigger(schedule next)
 ↓
 GithubWorkflow
-  ⇄ SpreadSheet(DB MakiOneDrawingBot)
+  ⇄ SpreadSheet(DB MakiOneDrawing)
   ⇄ TwitterAPI(@makimaki_draw)
 ```
 
@@ -16,7 +16,7 @@ GithubWorkflow
   - [Calendar](https://calendar.google.com/calendar/u/1?cid=MjIzMjZtYmcxY2JkODhiaTVzN2U5Y2tsYmdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 - Github
   - [GithubAPIToken](https://github.com/settings/tokens)
-  - [GithubActions](https://github.com/wallstudio/MakiOneDrawingBot/actions)
+  - [GithubActions](https://github.com/wallstudio/MakiOneDrawing/actions)
 - Twitter
   - [TweetDeck](https://tweetdeck.twitter.com/)
   - [TwitterDeveloperPortal](https://developer.twitter.com/en/portal/dashboard)
