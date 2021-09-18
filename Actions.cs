@@ -143,17 +143,15 @@ namespace MakiOneDrawingBot
             // Twitter
             foreach (var tweet in tweets)
             {
-                // TODO:
-                // tokens.Favorites.Create(tweet.Id);
-                // tokens.Statuses.Retweet(tweet.Id);
+                tokens.Favorites.Create(tweet.Id);
+                tokens.Statuses.Retweet(tweet.Id);
                 Console.WriteLine($"RT+Fav {tweet.Id,20} {tweet.User.ScreenName,-10} {tweet.Text}");
             }
             var followered = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
             var noFollowered = tweets.Select(s => s.User).Distinct(UserComparer.Default).Where(u => !followered.Contains(u.Id ?? 0)).ToArray();
             foreach (var user in noFollowered)
             {
-                // TODO:
-                // tokens.Friendships.Create(user_id: id, follow: true);
+                tokens.Friendships.Create(user_id: user.Id.Value, follow: true);
                 Console.WriteLine($"Follow {user.ScreenName}");
             }
 
