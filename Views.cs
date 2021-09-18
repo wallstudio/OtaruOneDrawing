@@ -112,9 +112,9 @@ namespace MakiOneDrawingBot
                 context.DrawText(
                     options: option,
                     text: text,
-                    font: font.CreateFont(120, FontStyle.Bold),
+                    font: font.CreateFont(160, FontStyle.Bold),
                     color: Color.Black,
-                    location: new PointF(image.Width/10, image.Height/3));
+                    location: new PointF(image.Width * 0.375f, image.Height * 0.45f));
             });
             using var buffer = new MemoryStream();
             image.SaveAsPng(buffer);
