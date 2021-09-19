@@ -171,25 +171,7 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(continueRanking.ElementAtOrDefault(i)?.User)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{continueRanking.ElementAtOrDefault(i)?.Count} 回連続"))} |
 
-## 基本ルール
-
-1. 毎月3日、13日、23日に開催されます。
-1. 当日の朝09:30に{LinkedName(me)}から「お題」が発表されます。
-1. その後、22:00に{LinkedName(me)}からスタートの告知ツイートがされます。
-1. 25:00までに「お題」にちなんだイラストを描き、ハッシュタグ「[{HASH_TAG}](https://twitter.com/hashtag/{HASH_TAG.TrimStart("#".ToCharArray())})」ツイートしてください。
-1. 翌日、投稿された作品を集計しリツイート、及びランキングに反映させていただきます。
-
-### 注意点
-
-- お題については厳密に遵守していただく必要はありません。
-- 基本的にはイラスト向けですが、文章、音楽などツイートの形式になっていれば何でもかまいません。
-- 集計の都合上、一つの作品を分割投稿する場合には、ハッシュタグは一つ目にのみ付けてください。複数作品を投稿する場合はそれぞれに付けてください。
-- R-18作品の投稿を妨げることはありませんが、ツイート内に「ｺｯｼｮﾘ」という文字列を含めていただけると助かります。
-- R-18作品はリツイート、及び集計の対象外とさせていただきます。
-- 本イベントにおいて発生した損害などに関しましては一切責任を負いませんのでご了承ください。
-- 過去に開催されていた類似イベントとは関係なく運営者も異なります。
-- その他ご不明な点等がありましたら、リプライ、DMなどでお問い合わせください。
-
+{File.ReadAllText("README.md")}
             ";
             return text.Trim();
         }
