@@ -40,13 +40,14 @@ jobs:
     - name: Run
       run: > 
         dotnet run --
-        --command "${{ github.event.inputs.command }}"
         --twitter-api-key "${{ secrets.TWITTER_API_KEY }}"
         --twitter-api-secret "${{ secrets.TWITTER_API_SECRET }}"
         --bearer-token "${{ secrets.BEARER_TOKEN }}"
         --access-token "${{ secrets.ACCESS_TOKEN }}"
         --access-token-secret "${{ secrets.ACCESS_TOKEN_SECRET }}"
         --google-service-account-jwt "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}"
+        
+        --command "${{ github.event.inputs.command }}"
         --actionDate "${{ github.event.inputs.actionDate }}"
         --eventDate "${{ github.event.inputs.eventDate }}"
         --nextDate "${{ github.event.inputs.nextDate }}"

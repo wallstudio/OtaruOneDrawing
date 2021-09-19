@@ -119,7 +119,7 @@ namespace MakiOneDrawingBot
             return buffer.ToArray();
         }
     
-        public static string Dashboard(UserResponse me, Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking)
+        public static string Dashboard(User me, Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking)
         {
             var medias = Enumerable.Range(0, 5)
                 .Select(i => LinkedMedia(
