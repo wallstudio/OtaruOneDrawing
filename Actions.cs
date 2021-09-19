@@ -186,12 +186,12 @@ namespace MakiOneDrawingBot
             var postRanking = posts
                 .GroupBy(pst => pst["id_user"])
                 .Select(g => new Post(g.Key, userInfoTable.First(u => u.Id == long.Parse(g.Key)), g, g.Count()))
-                .OrderBy(info => info.Count)
+                .OrderByDescending(info => info.Count)
                 .ToArray();
             var entryRanking = posts
                 .GroupBy(pst => pst["id_user"])
                 .Select(g => new Post(g.Key, userInfoTable.First(u => u.Id == long.Parse(g.Key)), g, g.Select(p => p["id_schedule"]).Distinct().Count()))
-                .OrderBy(info => info.Count)
+                .OrderByDescending(info => info.Count)
                 .ToArray();
             var continueRanking = posts
                 .GroupBy(pst => pst["id_user"])
@@ -203,7 +203,7 @@ namespace MakiOneDrawingBot
                         .OrderByDescending(s => DateTime.Parse(s["date"]))
                         .TakeWhile(s => g.Any(pst => pst["id_schedule"] == s["id"]))
                         .Count()))
-                .OrderBy(info => info.Count)
+                .OrderByDescending(info => info.Count)
                 .ToArray();
             schedule["ranking_post"] = string.Join(",", postRanking.Select(p => p.Id));
             schedule["ranking_entry"] = string.Join(",", entryRanking.Select(p => p.Id));
