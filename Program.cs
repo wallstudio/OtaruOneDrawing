@@ -52,7 +52,11 @@ namespace MakiOneDrawingBot
                 case nameof(Actions.AccumulationPosts):
                     actions.AccumulationPosts();
                     break;
+                case nameof(Actions.RegeneratSummaryPage):
+                    actions.RegeneratSummaryPage();
+                    break;
                 case "null":
+                    Console.Write("Command: ");
                     var newCommand = Console.ReadLine();
                     Main(args.Select(a => a == command ? newCommand : a).ToArray());
                     break;

@@ -190,28 +190,29 @@ namespace MakiOneDrawingBot
         (Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking) Aggregate(DB tables)
         {
             var posts = tables["post"];
-            var userInfoTable = posts.Any()
-                // https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/follow-search-get-users/api-reference/get-users-lookup
-                ? posts.Select(p => long.Parse(p["id_user"]))
-                    .Distinct()
-                    .Select((id, i) => (id, i))
-                    .GroupBy(t => t.i / 95, t => t.id)
-                    .SelectMany(ids => tokens.Users.Lookup(ids))
-                    .ToArray()
-                : Enumerable.Empty<User>();
+            var userInfoTable = posts
+                .Select(p => long.Parse(p["id_user"]))
+                .Distinct()
+                .Select((id, i) => (id, i))
+                // .SelectMany(ids => tokens.Users.Lookup(ids))
+                .GroupBy(t => t.i / 95, t => t.id).SelectMany(ids => tokens.Users.Lookup(ids)) // avoid limit
+                .ToArray();
             var recently = posts
-                .OrderByDescending(pst => DateTime.Parse(pst["ts_utc_post"]))
+                .OrderBy(pst => DateTime.Parse(tables["schedule"][pst["id_schedule"]]["date"]))
+                .ThenBy(pst => DateTime.Parse(pst["ts_utc_post"]))
                 .Select(p => new Recentry(userInfoTable.First(u => u.Id == long.Parse(p["id_user"])), p))
                 .ToArray();
             var postRanking = posts
                 .GroupBy(pst => pst["id_user"])
                 .Select(g => new Post(g.Key, userInfoTable.First(u => u.Id == long.Parse(g.Key)), g, g.Count()))
                 .OrderByDescending(info => info.Count)
+                .ThenBy(post => post.User.ScreenName == "yukawallstudio")
                 .ToArray();
             var entryRanking = posts
                 .GroupBy(pst => pst["id_user"])
                 .Select(g => new Post(g.Key, userInfoTable.First(u => u.Id == long.Parse(g.Key)), g, g.Select(p => p["id_schedule"]).Distinct().Count()))
                 .OrderByDescending(info => info.Count)
+                .ThenBy(post => post.User.ScreenName == "yukawallstudio")
                 .ToArray();
             var continueRanking = posts
                 .GroupBy(pst => pst["id_user"])
@@ -224,6 +225,7 @@ namespace MakiOneDrawingBot
                 .TakeWhile(s => g.Any(pst => pst["id_schedule"] == s["id"]))
                 .Count()))
                 .OrderByDescending(info => info.Count)
+                .ThenBy(post => post.User.ScreenName == "yukawallstudio")
                 .ToArray();
             return (recently, postRanking, entryRanking, continueRanking);
         }
