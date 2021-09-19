@@ -71,8 +71,8 @@ namespace MakiOneDrawingBot
         static string GetOption(this string[] args, string label)
         {
             var value = args.SkipWhile(a => a != $"--{label}").Skip(1).FirstOrDefault();
-            if(value == null) throw new ArgumentException(label);
-            if(value.StartsWith("--")) throw new ArgumentException(label);
+            if(value == null) throw new ArgumentException($"{label} value is null");
+            if(value.StartsWith("--")) throw new ArgumentException($"{label} value is other option label? ({value})");
             return value;
         }
     }
