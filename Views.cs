@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System.IO;
+using System.Text;
 
 namespace MakiOneDrawingBot
 {
@@ -16,6 +17,11 @@ namespace MakiOneDrawingBot
     {
         public static readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
         static string HELP_URL => $"https://wallstudio.github.io/MakiOneDrawing?v={DateTime.Now.Ticks:x}";
+        public static string HELP_URL_INDEX => $"index";
+        public static string HELP_URL_RECENTRY => $"recentry";
+        public static string HELP_URL_POST_RANK => $"post_rank";
+        public static string HELP_URL_ENTRY_RANK => $"entry_rank";
+        public static string HELP_URL_CONTINUE_RANK => $"continue_rank";
         
         public static string PredictTweet(string theme1, string theme2)
         {
@@ -118,8 +124,8 @@ namespace MakiOneDrawingBot
             image.SaveAsPng(buffer);
             return buffer.ToArray();
         }
-    
-        public static string Dashboard(User me, Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking)
+
+        public static string Dashboard(Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking)
         {
             var medias = Enumerable.Range(0, 5)
                 .Select(i => LinkedMedia(
@@ -128,8 +134,6 @@ namespace MakiOneDrawingBot
                     mediaUrl: recently.ElementAtOrDefault(i)?.Post?["url_media"]));
 
             var text = @$"
-# {HASH_TAG.TrimStart('#')}
-
 [📝基本ルール](#基本ルール)
 
 ## 最近の作品
@@ -138,6 +142,9 @@ namespace MakiOneDrawingBot
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | {string.Join(" | ", medias)} |
 | {string.Join(" | ", Enumerable.Range(0, 10).Select(i => LinkedName(recently.ElementAtOrDefault(i)?.User)))} |
+
+
+[全てみる]({HELP_URL_RECENTRY})
 
 ## ランキング
 
@@ -151,6 +158,8 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(postRanking.ElementAtOrDefault(i)?.User)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{postRanking.ElementAtOrDefault(i)?.Count} 作品"))} |
 
+[全てみる]({HELP_URL_POST_RANK})
+
 ### 🏆Best 参加回数🏆
 
 イベントに沢山参加してくださった方々です！
@@ -161,6 +170,8 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(entryRanking.ElementAtOrDefault(i)?.User)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{entryRanking.ElementAtOrDefault(i)?.Count} 回"))} |
 
+[全てみる]({HELP_URL_ENTRY_RANK})
+
 ### 🏆Best 継続数🏆
 
 継続的に参加してくださっている方々です！
@@ -170,6 +181,96 @@ namespace MakiOneDrawingBot
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedImage(continueRanking.ElementAtOrDefault(i)?.User)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => LinkedName(continueRanking.ElementAtOrDefault(i)?.User)))} |
 | {string.Join(" | ", Enumerable.Range(0, 3).Select(i => $"{continueRanking.ElementAtOrDefault(i)?.Count} 回連続"))} |
+
+[全てみる]({HELP_URL_CONTINUE_RANK})
+
+{File.ReadAllText("README.md")}
+            ";
+            return text.Trim();
+        }
+
+        public static string RecentryPage(Recentry[] recently)
+        {
+            var text = @$"
+[📝基本ルール](#基本ルール)
+
+[戻る]({HELP_URL_INDEX})
+
+## 🏆Best 作品数🏆 （全て）
+
+| サムネイル | イベント日 | アイコン | ユーザー名 |
+| :--: | :--: | :--: | :--: |
+{string.Join("\n", recently.Select((post, i) =>
+{
+    var media = LinkedMedia(
+        screenName: post?.User?.ScreenName,
+        statusId: post?.Post?["id_status"],
+        mediaUrl: post?.Post?["url_media"]);
+    return $"| {media} | {post.Post["id_schedule"]} | {LinkedImage(post?.User)} | {LinkedName(post?.User)} |";
+}))}
+
+{File.ReadAllText("README.md")}
+            ";
+            return text.Trim();
+        }
+
+        public static string PostRankingPage(Post[] postRanking)
+        {
+            var text = @$"
+[📝基本ルール](#基本ルール)
+
+[戻る]({HELP_URL_INDEX})
+
+## 🏆Best 作品数🏆 （全て）
+
+| No | アイコン | ユーザー名 | スコア |
+| :--: | :--: | :--: | :--: |
+{string.Join("\n", postRanking.Select((post, i) =>
+{
+    return $"| {i + 1} | {LinkedImage(post?.User)} | {LinkedName(post?.User)} | {post?.Count} 作品 |";
+}))}
+
+{File.ReadAllText("README.md")}
+            ";
+            return text.Trim();
+        }
+
+        public static string EntryRankingPage(Post[] entryRanking)
+        {
+            var text = @$"
+[📝基本ルール](#基本ルール)
+
+[戻る]({HELP_URL_INDEX})
+
+## 🏆Best 参加回数🏆 （全て）
+
+| No | アイコン | ユーザー名 | スコア |
+| :--: | :--: | :--: | :--: |
+{string.Join("\n", entryRanking.Select((post, i) =>
+{
+    return $"| {i + 1} | {LinkedImage(post?.User)} | {LinkedName(post?.User)} | {post?.Count} 回 |";
+}))}
+
+{File.ReadAllText("README.md")}
+            ";
+            return text.Trim();
+        }
+    
+        public static string ContinueRankingPage(Post[] continueRanking)
+        {
+            var text = @$"
+[📝基本ルール](#基本ルール)
+
+[戻る]({HELP_URL_INDEX})
+
+## 🏆Best 継続数🏆 （全て）
+
+| No | アイコン | ユーザー名 | スコア |
+| :--: | :--: | :--: | :--: |
+{string.Join("\n", continueRanking.Select((post, i) =>
+{
+    return $"| {i + 1} | {LinkedImage(post?.User)} | {LinkedName(post?.User)} | {post?.Count} 回連続 |";
+}))}
 
 {File.ReadAllText("README.md")}
             ";
