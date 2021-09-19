@@ -1,19 +1,21 @@
+# 基本情報
+
 [![Main](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/main.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/main.yml)
 [![Regen Summary](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/regen_summary.yml/badge.svg)](https://github.com/wallstudio/MakiOneDrawing/actions/workflows/regen_summary.yml)
 
-## [ランキング](https://wallstudio.github.io/MakiOneDrawing/)
+### [ランキング](https://wallstudio.github.io/MakiOneDrawing/)
 
 継続参加や、投稿数のランキングを設けています。  
 マキマキ愛で、ランカーを目指しましょう！
 
-## [カレンダー](https://calendar.google.com/calendar/u/1?cid=MjIzMjZtYmcxY2JkODhiaTVzN2U5Y2tsYmdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
+### [カレンダー](https://calendar.google.com/calendar/u/1?cid=MjIzMjZtYmcxY2JkODhiaTVzN2U5Y2tsYmdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 
 ワンドロの開催日の共有カレンダーです。  
 開始時間の1時間前に通知が鳴るようになっています。
 
 また、特別回もカレンダーから確認できます。（特別回は1か月前ぐらいに登録する予定です）
 
-## 基本ルール
+### 基本ルール
 
 1. 毎月3日、13日、23日に開催されます。
 1. 当日の朝09:30に[@makimaki_draw](https://twitter.com/makimaki_draw)から「お題」が発表されます。

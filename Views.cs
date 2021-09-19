@@ -136,7 +136,9 @@ namespace MakiOneDrawingBot
             var text = @$"
 [📝基本ルール](#基本ルール)
 
-## 最近の作品
+## ランキング
+
+### 最近の作品
 
 | 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ | 6️⃣ | 7️⃣ | 8️⃣ | 9️⃣ | 🔟 |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -146,7 +148,6 @@ namespace MakiOneDrawingBot
 
 [全てみる]({HELP_URL_RECENTRY})
 
-## ランキング
 
 ### 🏆Best 作品数🏆
 
@@ -192,11 +193,11 @@ namespace MakiOneDrawingBot
         public static string RecentryPage(Recentry[] recently)
         {
             var text = @$"
-[📝基本ルール](#基本ルール)
-
 [戻る]({HELP_URL_INDEX})
 
-## 🏆Best 作品数🏆 （全て）
+[📝基本ルール](#基本ルール)
+
+## 全ての作品
 
 | サムネイル | イベント日 | アイコン | ユーザー名 |
 | :--: | :--: | :--: | :--: |
@@ -217,9 +218,9 @@ namespace MakiOneDrawingBot
         public static string PostRankingPage(Post[] postRanking)
         {
             var text = @$"
-[📝基本ルール](#基本ルール)
-
 [戻る]({HELP_URL_INDEX})
+
+[📝基本ルール](#基本ルール)
 
 ## 🏆Best 作品数🏆 （全て）
 
@@ -238,9 +239,9 @@ namespace MakiOneDrawingBot
         public static string EntryRankingPage(Post[] entryRanking)
         {
             var text = @$"
-[📝基本ルール](#基本ルール)
-
 [戻る]({HELP_URL_INDEX})
+
+[📝基本ルール](#基本ルール)
 
 ## 🏆Best 参加回数🏆 （全て）
 
@@ -259,9 +260,9 @@ namespace MakiOneDrawingBot
         public static string ContinueRankingPage(Post[] continueRanking)
         {
             var text = @$"
-[📝基本ルール](#基本ルール)
-
 [戻る]({HELP_URL_INDEX})
+
+[📝基本ルール](#基本ルール)
 
 ## 🏆Best 継続数🏆 （全て）
 
