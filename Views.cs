@@ -127,12 +127,6 @@ namespace MakiOneDrawingBot
 
         public static string Dashboard(Recentry[] recently, Post[] postRanking, Post[] entryRanking, Post[] continueRanking)
         {
-            var medias = Enumerable.Range(0, 5)
-                .Select(i => LinkedMedia(
-                    screenName: recently.ElementAtOrDefault(i)?.User?.ScreenName,
-                    statusId: recently.ElementAtOrDefault(i)?.Post?["id_status"],
-                    mediaUrl: recently.ElementAtOrDefault(i)?.Post?["url_media"]));
-
             var text = @$"
 [📝基本ルール](#基本ルール)
 
@@ -142,8 +136,8 @@ namespace MakiOneDrawingBot
 
 | 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ | 6️⃣ | 7️⃣ | 8️⃣ | 9️⃣ | 🔟 |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| {string.Join(" | ", medias)} |
-| {string.Join(" | ", Enumerable.Range(0, 10).Select(i => LinkedName(recently.ElementAtOrDefault(i)?.User)))} |
+| {string.Join(" | ", recently.Take(10).Select(post => LinkedMedia(post?.User?.ScreenName, post?.Post?["id_status"], post?.Post?["url_media"])))} |
+| {string.Join(" | ", recently.Take(10).Select(post => LinkedName(post?.User)))} |
 
 
 [全てみる]({HELP_URL_RECENTRY})
