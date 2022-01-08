@@ -2,6 +2,8 @@ name: Regen Summary
 
 on:
   push :
+    branches:
+      - master
 jobs:
   build:
 
