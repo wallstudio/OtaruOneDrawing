@@ -1,6 +1,7 @@
-name: Test Generate Image
+name: Test Sequence
 
 on:
+  push :
   workflow_dispatch :
     inputs:
 jobs:
@@ -28,14 +29,14 @@ jobs:
         --access-token "${{ secrets.ACCESS_TOKEN }}"
         --access-token-secret "${{ secrets.ACCESS_TOKEN_SECRET }}"
         --google-service-account-jwt "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}"
-        --command "TestGenerateTextImage"
+        --command "TestSequence"
         --actionDate "null"
         --eventDate "2100/1/1"
         --nextDate "null"
-        --general "test generate image"
+        --general "test"
 
     - name: Archive
       uses: actions/upload-artifact@v2
       with:
-        name: test_generate_image
-        path: ./TestGenerateTextImage
+        name: test_output
+        path: ./output
