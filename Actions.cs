@@ -54,7 +54,7 @@ namespace MakiOneDrawingBot
                 media_ids: new[] { uploadResult.MediaId },
                 auto_populate_reply_metadata: true);
 
-            schedule.PreId = morning.Id.ToString();
+            schedule.PreId = morning.Id;
         }
 
         /// <summary> ワンドロ開始のツイートを投げる </summary>
@@ -68,10 +68,10 @@ namespace MakiOneDrawingBot
             var start = tokens.Statuses.Update(
                 status: Views.StartTweet(schedule.Theme1, schedule.Theme2),
                 media_ids: new[] { uploadResult.MediaId },
-                in_reply_to_status_id: long.TryParse(schedule.PreId, out var i) ? i : null,
+                in_reply_to_status_id: schedule.PreId,
                 auto_populate_reply_metadata: true);
 
-            schedule.BeginId = start.Id.ToString();
+            schedule.BeginId = start.Id;
         }
 
         /// <summary> ワンドロ終了のツイートを投げる </summary>
@@ -84,11 +84,11 @@ namespace MakiOneDrawingBot
             var next = DateOnly.Parse(db.GetTable<Schedule>().SkipWhile(s => s.Id != ScheduleId).Skip(1).First().Id);
             var finish = tokens.Statuses.Update(
                 status: Views.FinishTweet(next),
-                in_reply_to_status_id: long.TryParse(schedule.BeginId, out var i) ? i : null,
+                in_reply_to_status_id: schedule.BeginId,
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
 
-            schedule.EndId = finish.Id.ToString();
+            schedule.EndId = finish.Id;
         }
 
         /// <summary> 投稿を集計してRTとランキングを更新する </summary>
@@ -100,8 +100,8 @@ namespace MakiOneDrawingBot
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = tokens.Statuses.Lookup(new []{ long.Parse(schedule.BeginId) }).First().CreatedAt - TimeSpan.FromHours(3);
-            var until = tokens.Statuses.Lookup(new []{ long.Parse(schedule.EndId) }).First().CreatedAt + TimeSpan.FromHours(3); // 遅刻OK
+            var since = tokens.Statuses.Lookup(new []{ schedule.BeginId })[0].CreatedAt - TimeSpan.FromHours(3);
+            var until = tokens.Statuses.Lookup(new []{ schedule.EndId })[0].CreatedAt + TimeSpan.FromHours(3); // 遅刻OK
             var format = @"yyy-MM-dd_HH\:mm\:ss_UTC";
             var query = $"{Views.HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since.ToString(format)} until:{until.ToString(format)}"; // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
             var foundTweets = EnumerateSearchTweets(
@@ -136,10 +136,10 @@ namespace MakiOneDrawingBot
             var next = DateOnly.Parse(db.GetTable<Schedule>().SkipWhile(s => s.Id != ScheduleId).Skip(1).First().Id);
             var preRetweet = tokens.Statuses.Update(
                 status: Views.ResultTweet(newTweets, next),
-                in_reply_to_status_id: long.TryParse(schedule.EndId, out var i) ? i : null,
+                in_reply_to_status_id: schedule.EndId,
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
-            schedule.AccId = preRetweet.Id.ToString();
+            schedule.AccId = preRetweet.Id;
 
             // Reflect Twitter
             foreach (var tweet in newTweets)
@@ -234,7 +234,7 @@ namespace MakiOneDrawingBot
                 {
                     User = g.First().Value.User,
                     Count = schedule
-                        .Where(s => !string.IsNullOrEmpty(s.AccId))
+                        .Where(s => s.AccId is not null)
                         .Reverse()
                         .TakeWhile(s => g.Any(t => t.Key.ScheduleId == s.Id))
                         .Count(),
