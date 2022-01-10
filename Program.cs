@@ -22,7 +22,6 @@ namespace MakiOneDrawingBot
                 accessTokenSecret: args.GetOption("access-token-secret"),
                 googleServiceAccountJwt: args.GetOption("google-service-account-jwt"),
                 date: args.GetOption("eventDate"), // nullable
-                next: args.GetOption("nextDate"), // nullable
                 general: args.GetOption("general")); // nullable
 
             // 指定時間まで待つ（タイマーの誤差を吸収する）
