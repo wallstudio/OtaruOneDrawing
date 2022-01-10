@@ -106,7 +106,9 @@ public class Table<T> : TableBase, IEnumerable<T> where T : EntryBase, new()
         {
             var row = m_RawData.Values[i].Select(o => o.ToString()).ToArray();
             var entry = new T();
-            entry.Deserialize(new (Enumerable.Zip(columnLabels, row).ToDictionary(kv => kv.First, kv => kv.Second)));
+            entry.Deserialize(new (columnLabels
+                .Select((lab, i) => (lab, row.ElementAtOrDefault(i)))
+                .ToDictionary(kv => kv.lab, kv => kv.Item2)));
             m_Rows.Add(entry);
         }
     }
