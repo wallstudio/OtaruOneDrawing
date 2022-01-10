@@ -100,9 +100,9 @@ namespace MakiOneDrawingBot
 
             // Collection
             var me = tokens.Account.VerifyCredentials();
-            var since = DateTime.Parse(schedule.BeginId) - TimeSpan.FromHours(3);
-            var until = DateTime.Parse(schedule.EndId) + TimeSpan.FromHours(3); // 遅刻OK
-            var format = @"yyy-MM-dd_HH\:mm\:ss_JST";
+            var since = tokens.Statuses.Lookup(new []{ long.Parse(schedule.BeginId) }).First().CreatedAt - TimeSpan.FromHours(3);
+            var until = tokens.Statuses.Lookup(new []{ long.Parse(schedule.EndId) }).First().CreatedAt + TimeSpan.FromHours(3); // 遅刻OK
+            var format = @"yyy-MM-dd_HH\:mm\:ss_UTC";
             var query = $"{Views.HASH_TAG} -from:{me.ScreenName} exclude:retweets since:{since.ToString(format)} until:{until.ToString(format)}"; // https://gist.github.com/cucmberium/e687e88565b6a9ca7039
             var foundTweets = EnumerateSearchTweets(
                 q: query,
@@ -129,7 +129,7 @@ namespace MakiOneDrawingBot
                 };
             }
             RegeneratSummaryPage(db, me);
-            Console.WriteLine($"Total post: {posts.Count()} Total Users: {posts.DistinctBy(p => long.Parse(p.UserName)).Count()}");
+            Console.WriteLine($"Total post: {posts.Count()}");
 
             // Post tweet
             var newTweets = posts.Where(p => p.ScheduleId == schedule.Id).ToArray();
@@ -139,6 +139,7 @@ namespace MakiOneDrawingBot
                 in_reply_to_status_id: long.TryParse(schedule.EndId, out var i) ? i : null,
                 // attachment_url: null, // 引用
                 auto_populate_reply_metadata: true);
+            schedule.AccId = preRetweet.Id.ToString();
 
             // Reflect Twitter
             foreach (var tweet in newTweets)
@@ -147,13 +148,18 @@ namespace MakiOneDrawingBot
                 tokens.Statuses.Retweet(tweet.Id);
                 Console.WriteLine($"RT+Fav {tweet.Id,20}");
             }
+            
+            var allUsers = posts
+                .Select(p => long.Parse(p.Id))
+                .Chunk(95).SelectMany(ts => tokens.Statuses.Lookup(ts)) // avoid limit
+                .Select(s => (long)s.User.Id)
+                .Distinct();
             var followered = tokens.Friends.EnumerateIds(EnumerateMode.Next, user_id: (long)me.Id, count: 5000).ToArray();
-            var participants = newTweets.Select(t => long.Parse(t.Id)).Distinct();
-            var noFollowered = tokens.Users.Lookup(participants.Except(followered));
-            foreach (var user in noFollowered)
+            var newUsers = allUsers.Except(followered);
+            foreach (var user in newUsers)
             {
-                tokens.Friendships.Create(user_id: user.Id.Value, follow: true);
-                Console.WriteLine($"Follow {user.ScreenName}");
+                tokens.Friendships.Create(user_id: user, follow: true);
+                Console.WriteLine($"Follow {user}");
             }
         }
 
