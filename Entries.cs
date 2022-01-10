@@ -15,8 +15,7 @@ public class Schedule : EntryBase
 
     public override void Deserialize(Dictionary<string, string> columns)
     {
-        Theme1 = columns[nameof(Theme1)];
-        Theme2 = columns[nameof(Theme2)];
+        base.Deserialize(columns);
         PreId = long.TryParse(columns[nameof(PreId)], out var preId) ? preId : null;
         BeginId = long.TryParse(columns[nameof(BeginId)], out var beginId) ? beginId : null;
         EndId = long.TryParse(columns[nameof(EndId)], out var endId) ? endId : null;

@@ -164,7 +164,10 @@ public abstract class EntryBase
         foreach (var (label, value) in columns)
         {
             var prop = props.First(p => p.Name == label);
-            prop.SetValue(this, value);
+            if(prop.PropertyType == typeof(string))
+            {
+                prop.SetValue(this, value);
+            }
         }
     }
 }

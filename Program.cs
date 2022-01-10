@@ -71,16 +71,16 @@ namespace MakiOneDrawingBot
                 case "TestSequence":
                     {
                         var dir = $"output/{DateTime.Now:yyyy_MM_dd_HH_mm_ss_zz}";
-                        Directory.CreateDirectory($"{dir}/img");
-                        foreach (var (text, bin) in actions.TestGenerateTextImages())
-                        {
-                            File.WriteAllBytes($"{dir}/img/{text.Replace("\n", " ")}.png", bin);
-                        }
                         Directory.CreateDirectory($"{dir}/docs");
                         actions.RegeneratSummaryPage();
                         foreach (var file in Directory.GetFiles("docs"))
                         {
                             File.Copy(file, $"{dir}/docs/{Path.GetFileName(file)}");
+                        }
+                        Directory.CreateDirectory($"{dir}/img");
+                        foreach (var (text, bin) in actions.TestGenerateTextImages())
+                        {
+                            File.WriteAllBytes($"{dir}/img/{text.Replace("\n", " ")}.png", bin);
                         }
                         break;
                     }
