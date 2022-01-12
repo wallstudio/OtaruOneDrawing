@@ -39,7 +39,6 @@ namespace MakiOneDrawingBot
                 .Select(schedule =>
                 {
                     var text = $"{schedule.Theme1}\n\n{schedule.Theme2}";
-                    Console.WriteLine(Environment.CurrentManagedThreadId);
                     return (text, Views.GenerateTextImage(text));
                 })
                 .ToArray();
