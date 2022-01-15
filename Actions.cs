@@ -153,8 +153,8 @@ namespace MakiOneDrawingBot
             {
                 if(!DryMode)
                 {
-                    tokens.Favorites.Create(tweet.Id);
-                    tokens.Statuses.Retweet(tweet.Id);
+                    tokens.Favorites.Create(long.Parse(tweet.Id));
+                    tokens.Statuses.Retweet(long.Parse(tweet.Id));
                 }
                 Console.WriteLine($"RT+Fav {tweet.Id,20}");
             }
