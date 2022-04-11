@@ -119,7 +119,7 @@ namespace MakiOneDrawingBot
 
         public static byte[] GenerateTextImage(string text)
         {
-            using var image = Image.Load("docs/img/maki_theme_template.png");
+            using var image = Image.Load("docs/img/theme_template.png");
             image.Mutate(context =>
             {
                 var font = new FontCollection().Install("font/Corporate-Logo-Rounded.ttf");
