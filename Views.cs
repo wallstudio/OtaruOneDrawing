@@ -124,6 +124,7 @@ namespace MakiOneDrawingBot
             {
                 var font = new FontCollection().Install("font/Corporate-Logo-Rounded.ttf");
                 var option = new DrawingOptions();
+                option.TextOptions.LineSpacing = 1.0f;
                 option.TextOptions.VerticalAlignment = VerticalAlignment.Center;
                 option.TextOptions.HorizontalAlignment = HorizontalAlignment.Left;
                 option.TextOptions.FallbackFonts.Add(new FontCollection().Install("font/TwemojiMozilla.ttf")); // 幅計算がうまく行ってないっぽい

@@ -62,7 +62,7 @@ namespace MakiOneDrawingBot
                     break;
                 case nameof(Views.GenerateTextImage):
                     {
-                        var text = Console.ReadLine().Replace("\\n", "\n");
+                        var text = args.GetOption("text") ?? Console.ReadLine().Replace("\\n", "\n");
                         var bin = Views.GenerateTextImage(text);
                         Directory.CreateDirectory("output");
                         File.WriteAllBytes($"output/{text.Replace("\n", " ")}.png", bin);
