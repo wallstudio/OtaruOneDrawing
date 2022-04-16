@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "push" : "clasp push",
-    "pull" : "clasp pull"
+    "push": "clasp push",
+    "pull": "clasp pull"
   },
   "author": "",
   "license": "ISC",
