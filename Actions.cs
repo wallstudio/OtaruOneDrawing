@@ -12,7 +12,7 @@ namespace MakiOneDrawingBot
 {
     class Actions
     {
-        static readonly string DB_SHEET_ID = "1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0";
+        static readonly string DB_SHEET_ID = "1WBH5ZUl8dx24gWDg7dnVjDUGacUNuZX2rtilJUegUdI";
         static readonly string DOCS_DIR = "docs";
         static readonly string HELP_CONFIG_FILE = $"{DOCS_DIR}/_config.yml";
         static readonly Serializer SERIALIZER = new();

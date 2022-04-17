@@ -7,7 +7,7 @@ function onTrigger(arg: GoogleAppsScript.Events.AppsScriptEvent)
 
 	const span = 5 * 60 * 1000;
 	const now = new Date();
-	const schedules = new ScheduleTable("1Un15MnW9Z2ChwSdsxdAVw495uSmJN4jBHngcBpYxo_0");
+	const schedules = new ScheduleTable("1WBH5ZUl8dx24gWDg7dnVjDUGacUNuZX2rtilJUegUdI");
 
 	let taskCount = 0;
 	const commands: { id: string, cmd: string, timing: Date }[] = [];
@@ -37,7 +37,7 @@ function run(eventId: string, workflowName: string, timing: Date) : void
 		Authorization : `token ${getGithubToken()}`,
 		Accept : "application/vnd.github.v3+json"
 	};
-	const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/MakiOneDrawing/actions/workflows`, { method: "get", headers: headers });
+	const workflowsResponse = UrlFetchApp.fetch(`https://api.github.com/repos/wallstudio/OtaruOneDrawing/actions/workflows`, { method: "get", headers: headers });
 	const workflows : any[] = JSON.parse(workflowsResponse.getContentText()).workflows;
 	const workflow = workflows.find(w => w.name == "Main");
 
@@ -54,7 +54,7 @@ function run(eventId: string, workflowName: string, timing: Date) : void
 	if(isDryMode) return;
 
 	let res = UrlFetchApp.fetch(
-		`https://api.github.com/repos/wallstudio/MakiOneDrawing/actions/workflows/${workflow.id}/dispatches`,
+		`https://api.github.com/repos/wallstudio/OtaruOneDrawing/actions/workflows/${workflow.id}/dispatches`,
 		{ method: "post", headers: headers, payload: payload});
 	console.log(`${res.getResponseCode()}`);
 }
