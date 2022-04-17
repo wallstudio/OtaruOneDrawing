@@ -16,8 +16,8 @@ namespace MakiOneDrawingBot
     
     public static class Views
     {
-        public static readonly string HASH_TAG = "#弦巻マキ深夜の真剣お絵描き60分勝負";
-        static string HELP_URL => $"https://wallstudio.github.io/MakiOneDrawing?v={DateTime.Now.Ticks:x}";
+        public static readonly string HASH_TAG = "#トドいわんドロ";
+        static string HELP_URL => $"https://wallstudio.github.io/OtaruOneDrawing?v={DateTime.Now.Ticks:x}";
         public static string HELP_URL_INDEX => $"index";
         public static string HELP_URL_RECENTRY => $"recentry";
         public static string HELP_URL_POST_RANK => $"post_rank";
@@ -40,7 +40,8 @@ namespace MakiOneDrawingBot
         public static string PredictTweet(string theme1, string theme2)
         {
             var text = $@"
-{HASH_TAG} #ツルマキマキ
+{HASH_TAG}
+#小春六花 #夏色花梨 #花隈千冬
 今夜のわんどろのテーマ発表！
 
 今回のお題はこちらの二つ！
@@ -56,8 +57,9 @@ namespace MakiOneDrawingBot
         public static string StartTweet(string theme1, string theme2)
         {
             var text = $@"
-{HASH_TAG} #ツルマキマキ
-わんどろスタート！(｀・ω・´）
+{HASH_TAG}
+#小春六花 #夏色花梨 #花隈千冬
+わんどろスタート！
 
 今回のお題はこちらの二つ！
 投稿時はタグを忘れないでくださいね！！
@@ -73,10 +75,11 @@ namespace MakiOneDrawingBot
         public static string FinishTweet(DateOnly? nextDate)
         {
             var text = $@"
-{HASH_TAG} #ツルマキマキ
-わんどろ終了ーー！！( ´ ∀`)ﾉA
+{HASH_TAG}
+#小春六花 #夏色花梨 #花隈千冬
+わんどろ終了ーー！！
 
-投稿いただいたイラストは明日のお昼にRTします！！
+投稿いただいたイラストは後日RTします！！
 次回は {nextDate?.ToString(@"MM/dd\(ddd\)") ?? "未定"} の予定です、お楽しみに！！
 
 ▼イベントルール詳細
@@ -91,8 +94,9 @@ namespace MakiOneDrawingBot
             if(tweets.Length > 0)
             {
                 text = $@"
-{HASH_TAG} #ツルマキマキ
-昨日のわんどろの投稿イラストをRTします！！！(ﾟ∇^*)
+{HASH_TAG}
+#小春六花 #夏色花梨 #花隈千冬
+先日のわんどろの投稿イラストをRTします！！！
 {tweets.Length}作品の投稿をいただきました！
 
 次回は {nextDate?.ToString(@"MM/dd\(ddd\)") ?? "未定"} の予定です、お楽しみに！！
@@ -168,7 +172,7 @@ namespace MakiOneDrawingBot
 
 ### 🏆Best 作品数🏆
 
-沢山のマキマキイラスト作品を描き上げた方々です！
+沢山の小樽っ娘イラスト作品を描き上げた方々です！
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |

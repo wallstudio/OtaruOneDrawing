@@ -25,7 +25,7 @@ cmd /c "git checkout master && git pull && git merge develop && git push && git 
   - [Calendar](https://calendar.google.com/calendar/u/1?cid=MjIzMjZtYmcxY2JkODhiaTVzN2U5Y2tsYmdAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
 - Github
   - [GithubAPIToken](https://github.com/settings/tokens)
-  - [GithubActions](https://github.com/wallstudio/MakiOneDrawing/actions)
+  - [GithubActions](https://github.com/wallstudio/OtaruOneDrawing/actions)
 - Twitter
   - [TweetDeck](https://tweetdeck.twitter.com/)
   - [TwitterDeveloperPortal](https://developer.twitter.com/en/portal/dashboard)
