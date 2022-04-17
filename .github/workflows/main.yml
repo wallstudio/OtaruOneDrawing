@@ -1,0 +1,63 @@
+name: Main
+
+on:
+  workflow_dispatch :
+    inputs:
+      command:
+        description: 'Command (NotificationMorning|NotificationStart|NotificationFinish|AccumulationPosts)'
+        required: true
+        default: ''
+      actionDate:
+        description: 'ActionDate (yyyy/MM/dd HH:mm +09:00)'
+        required: false
+        default: ''
+      eventDate:
+        description: 'EventDate (yyyy/MM/dd)'
+        required: true
+        default: ''
+      general:
+        description: 'General'
+        required: false
+        default: ''
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: ChangeTimeZone
+      run: sudo timedatectl set-timezone Asia/Tokyo
+    - name: Run
+      run: > 
+        dotnet run --
+        --twitter-api-key "${{ secrets.TWITTER_API_KEY }}"
+        --twitter-api-secret "${{ secrets.TWITTER_API_SECRET }}"
+        --bearer-token "${{ secrets.BEARER_TOKEN }}"
+        --access-token "${{ secrets.ACCESS_TOKEN }}"
+        --access-token-secret "${{ secrets.ACCESS_TOKEN_SECRET }}"
+        --google-service-account-jwt "${{ secrets.GOOGLE_SERVICE_ACCOUNT_JWT }}"
+        --command "${{ github.event.inputs.command }}"
+        --actionDate "${{ github.event.inputs.actionDate }}"
+        --eventDate "${{ github.event.inputs.eventDate }}"
+        --general "${{ github.event.inputs.general }}"
+    - name: Git
+      run: |
+        if test -z `git diff HEAD`; then
+          echo "skip no changed"
+        else
+          git status
+          git diff
+          git add -A
+          git config --local user.email "example.com"
+          git config --local user.name "bot"
+          git commit -m "AUTO COMMIT (GITHUB ACTION WORKFLOW)"
+          git pull --no-rebase
+          git push
+        fi
+        
