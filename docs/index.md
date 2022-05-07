@@ -6,8 +6,8 @@
 
 | 1️⃣ | 2️⃣ | 3️⃣ | 4️⃣ | 5️⃣ | 6️⃣ | 7️⃣ | 8️⃣ | 9️⃣ | 🔟 |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [![](https://pbs.twimg.com/media/FRSh77oUcAU6WS0.jpg:thumb)](https://twitter.com/yukawallstudio/status/1519018789584523264) | [![](https://pbs.twimg.com/media/FQebG33akAQXDPi.png:thumb)](https://twitter.com/uwag0/status/1515350555656593414) | [![](https://pbs.twimg.com/media/FQfESJsaQAEnOy2.jpg:thumb)](https://twitter.com/yukawallstudio/status/1515401282970058753) |
-| [@yukawallstudio](https://twitter.com/yukawallstudio) | [@uwag0](https://twitter.com/uwag0) | [@yukawallstudio](https://twitter.com/yukawallstudio) |
+| [![](https://pbs.twimg.com/media/FSGUcjEVkAAVhUw.jpg:thumb)](https://twitter.com/yukawallstudio/status/1522662093018701827) | [![](https://pbs.twimg.com/media/FRSh77oUcAU6WS0.jpg:thumb)](https://twitter.com/yukawallstudio/status/1519018789584523264) | [![](https://pbs.twimg.com/media/FQebG33akAQXDPi.png:thumb)](https://twitter.com/uwag0/status/1515350555656593414) | [![](https://pbs.twimg.com/media/FQfESJsaQAEnOy2.jpg:thumb)](https://twitter.com/yukawallstudio/status/1515401282970058753) |
+| [@yukawallstudio](https://twitter.com/yukawallstudio) | [@yukawallstudio](https://twitter.com/yukawallstudio) | [@uwag0](https://twitter.com/uwag0) | [@yukawallstudio](https://twitter.com/yukawallstudio) |
 
 
 [全てみる](recentry)
@@ -21,7 +21,7 @@
 | :---: | :---: | :---: |
 | [![@yukawallstudio](https://pbs.twimg.com/profile_images/950043565232611328/_YQtygm4_bigger.jpg)](https://twitter.com/yukawallstudio) | [![@uwag0](https://pbs.twimg.com/profile_images/505203180431360000/JXmdpqS-_bigger.jpeg)](https://twitter.com/uwag0) |
 | [@yukawallstudio](https://twitter.com/yukawallstudio) | [@uwag0](https://twitter.com/uwag0) |
-| 2 作品 | 1 作品 |
+| 3 作品 | 1 作品 |
 
 [全てみる](post_rank)
 
@@ -33,7 +33,7 @@
 | :---: | :---: | :---: |
 | [![@yukawallstudio](https://pbs.twimg.com/profile_images/950043565232611328/_YQtygm4_bigger.jpg)](https://twitter.com/yukawallstudio) | [![@uwag0](https://pbs.twimg.com/profile_images/505203180431360000/JXmdpqS-_bigger.jpeg)](https://twitter.com/uwag0) |
 | [@yukawallstudio](https://twitter.com/yukawallstudio) | [@uwag0](https://twitter.com/uwag0) |
-| 2 回 | 1 回 |
+| 3 回 | 1 回 |
 
 [全てみる](entry_rank)
 
@@ -43,9 +43,9 @@
 
 | 🥇 | 🥈 | 🥉 |
 | :---: | :---: | :---: |
-| [![@uwag0](https://pbs.twimg.com/profile_images/505203180431360000/JXmdpqS-_bigger.jpeg)](https://twitter.com/uwag0) | [![@yukawallstudio](https://pbs.twimg.com/profile_images/950043565232611328/_YQtygm4_bigger.jpg)](https://twitter.com/yukawallstudio) |
-| [@uwag0](https://twitter.com/uwag0) | [@yukawallstudio](https://twitter.com/yukawallstudio) |
-| 1 回連続 | 1 回連続 |
+| [![@yukawallstudio](https://pbs.twimg.com/profile_images/950043565232611328/_YQtygm4_bigger.jpg)](https://twitter.com/yukawallstudio) | [![@uwag0](https://pbs.twimg.com/profile_images/505203180431360000/JXmdpqS-_bigger.jpeg)](https://twitter.com/uwag0) |
+| [@yukawallstudio](https://twitter.com/yukawallstudio) | [@uwag0](https://twitter.com/uwag0) |
+| 2 回連続 | 0 回連続 |
 
 [全てみる](continue_rank)
 
