@@ -6,6 +6,8 @@
 
 | サムネイル | イベント日 | アイコン | ユーザー名 |
 | :--: | :--: | :--: | :--: |
+| [![](https://pbs.twimg.com/media/FWL_9RoagAAxYwF.png:thumb)](https://twitter.com/uwag0/status/1541075540446449664) | 2022/06/26 | [![@uwag0](https://pbs.twimg.com/profile_images/505203180431360000/JXmdpqS-_bigger.jpeg)](https://twitter.com/uwag0) | [@uwag0](https://twitter.com/uwag0) |
+| [![](https://pbs.twimg.com/media/FWMRNRuagAEHHXz.jpg:thumb)](https://twitter.com/yukawallstudio/status/1541094433307127809) | 2022/06/26 | [![@yukawallstudio](https://pbs.twimg.com/profile_images/950043565232611328/_YQtygm4_bigger.jpg)](https://twitter.com/yukawallstudio) | [@yukawallstudio](https://twitter.com/yukawallstudio) |
 | [![](https://pbs.twimg.com/media/FVYkDEAacAE5hat.jpg:thumb)](https://twitter.com/matwusi0141/status/1537456919287582720) | 2022/06/16 | [![@matwusi0141](https://pbs.twimg.com/profile_images/1527193201073098752/7xgP63gw_bigger.jpg)](https://twitter.com/matwusi0141) | [@matwusi0141](https://twitter.com/matwusi0141) |
 | [![](https://pbs.twimg.com/media/FUkaOYoacAAPQEh.jpg:thumb)](https://twitter.com/matwusi0141/status/1533817235034324992) | 2022/06/06 | [![@matwusi0141](https://pbs.twimg.com/profile_images/1527193201073098752/7xgP63gw_bigger.jpg)](https://twitter.com/matwusi0141) | [@matwusi0141](https://twitter.com/matwusi0141) |
 | [![](https://pbs.twimg.com/media/FUk8g10UsAAgnXz.jpg:thumb)](https://twitter.com/nknm3422/status/1533824882236043264) | 2022/06/06 | [![@nknm3422](https://pbs.twimg.com/profile_images/1475131279079514118/rYCoWhVa_bigger.jpg)](https://twitter.com/nknm3422) | [@nknm3422](https://twitter.com/nknm3422) |
